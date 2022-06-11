@@ -8,7 +8,18 @@ const fileUpload = require('express-fileupload');
 const cors = require('cors');
 const host = 'localhost';
 const port = process.env.PORT || 8000;
+
+const session = require('express-session');
+const MongoDBSession = require('connect-mongodb-session')(session);
+
+const controller = require('./controllers/controller.js');
+
+
 let indexFile;
+
+const {MongoClient} = require('./db.js');
+
+const ModelData = require('./models/modelData')
 
 app.use(fileUpload({
     createParentPath: true,
@@ -46,6 +57,23 @@ app.post('/upload', async (req, res) => {
                 message: 'No file uploaded'
             });
         } else {
+
+            console.log("AAAAAAAAAAAAA")
+            const newModelData = new ModelData({
+                dataId: "C",
+                path: "path/to/file/longerssssss"
+            })
+
+            console.log(newModelData);
+            await newModelData.save();
+
+            const modelData = await ModelData.findOne(
+                {
+                    dataId: "C"
+                }
+            )
+            console.log(modelData)
+
             let file = req.files.fileInput;
             file.mv('./uploads/' + file.name);
 
