@@ -50,16 +50,7 @@
 <body>
 
     <div class="center">
-        <h1>Welcome to the home page.</h1>
-        <p>This will be where you can upload and view 3D models</p>
-        <form ref='uploadForm' 
-            id='uploadForm' 
-            action='http://localhost:8000/upload'
-            method='post'
-            encType="multipart/form-data">
-            <input type="file" name="fileInput" accept=".obj"/>
-            <input type="submit" value="upload"/>
-        </form>
+        <p>View this model!</p>
         <canvas id="canvas"></canvas>
     </div>
     <script src="https://webglfundamentals.org/webgl/resources/webgl-utils.js"></script>
