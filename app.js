@@ -13,7 +13,7 @@ const session = require('express-session');
 const MongoDBSession = require('connect-mongodb-session')(session);
 
 const controller = require('./controllers/controller.js');
-
+app.use(express.static(__dirname + '/public'));
 
 let indexFile;
 
@@ -43,6 +43,7 @@ fs.readFile(__dirname + "/index.html")
         app.listen(port, host, () => {
             console.log(`Server is running on http://${host}:${port}`);
         });
+
     })
     .catch(err => {
         console.error(`Could not read index.html file: ${err}`);
