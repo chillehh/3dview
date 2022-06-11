@@ -8,6 +8,7 @@ const fileUpload = require('express-fileupload');
 const cors = require('cors');
 const host = 'localhost';
 const port = process.env.PORT || 8000;
+const { v4: uuid } = require('uuid');
 
 const session = require('express-session');
 const MongoDBSession = require('connect-mongodb-session')(session);
@@ -59,23 +60,20 @@ app.post('/upload', async (req, res) => {
             });
         } else {
 
-            console.log("AAAAAAAAAAAAA")
-            const newModelData = new ModelData({
-                dataId: "C",
-                path: "path/to/file/longerssssss"
-            })
-
-            console.log(newModelData);
-            await newModelData.save();
-
-            const modelData = await ModelData.findOne(
-                {
-                    dataId: "C"
-                }
-            )
-            console.log(modelData)
-
             let file = req.files.fileInput;
+            // Split by all dots, grab last element in array
+            let dots = _.split(file.name, '.')
+            let extension = dots[dots.length - 1]
+            if (extension !== undefined && extension === 'obj') {
+                console.log('HAVE extension, > add to db')
+                let id = uuid();
+                console.log(id)
+                const newModelData = new ModelData({
+                    dataId: id,
+                    path: "./uploads/" + file.name,
+                })
+                await newModelData.save();
+            }
             file.mv('./uploads/' + file.name);
 
             // send response to the upload route
