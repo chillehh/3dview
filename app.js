@@ -47,7 +47,7 @@ app.post('/upload', async (req, res) => {
             });
         } else {
             let file = req.files.fileInput;
-            file.mv('./uploads/' + fileInput.name);
+            file.mv('./uploads/' + file.name);
 
             // send response to the upload route
             // TODO: redirect to 3D viewer page with response data
