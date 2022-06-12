@@ -1,4 +1,5 @@
 const { response } = require('express');
+const axios = require('axios');
 const _ = require('lodash');
 const { v4: uuid } = require('uuid');
 const bodyParser = require('body-parser');
@@ -36,11 +37,11 @@ const uploadFile = async (req, res) => {
                 let url = urls[0]
                 const newModelData = new ModelData({
                     dataId: url,
-                    path: "../uploads/" + file.name,
+                    path: "./uploads/" + file.name,
                 })
                 await newModelData.save();
             }
-            file.mv('../uploads/' + file.name);
+            file.mv('./uploads/' + file.name);
 
             // send response to the upload route
             let urls = _.split(id, '-')
@@ -80,14 +81,16 @@ const getPath = async (req, res) => {
             }
         )
         console.log(modelData);
-        viewer.main(modelData.path);
-        res.send({
-            status: true,
-            message: 'Has path',
-            data: {
-                path: modelData.path,
-            }
-        });
+        
+        const response = await axios.get(
+          modelData.path,
+          { responseType: 'arraybuffer' }
+        );
+        const buffer = Buffer.from(response.data, 'utf-8');
+        res.status(200).send(buffer);
+        console.log(object);
+        res.set('Content-Type', 'application/json');
+        res.send(object.json());
         // return modelData.path;
     } catch (err) {
         res.status(500).send(err);

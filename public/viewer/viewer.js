@@ -94,14 +94,11 @@ async function callRoute(id) {
     console.log(url);
     let path;
     await fetch(url)
-        .then(response =>  {
-            response.json();
-            console.log(response);
+        .then(async response =>  {
+            path = await response.json();
+            console.log(path);
+            // response.json();
         })
-        .then(data => {
-            path = data
-            console.log(data, path);
-        });
     console.log('HAAS PATH: ' + path);
     return path;
 }
