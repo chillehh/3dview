@@ -88,7 +88,25 @@ function parseOBJ(text) {
     };
 }
 
-async function main() {
+async function callRoute(id) {
+    console.log(id + ' has id ' + window.location.origin);
+    const url = window.location.origin + '/api/' + id;
+    console.log(url);
+    let path;
+    await fetch(url)
+        .then(response =>  {
+            response.json();
+            console.log(response);
+        })
+        .then(data => {
+            path = data
+            console.log(data, path);
+        });
+    console.log('HAAS PATH: ' + path);
+    return path;
+}
+
+async function main(path) {
     // Get A WebGL context
     /** @type {HTMLCanvasElement} */
     const canvas = window.document.querySelector("#canvas");
@@ -131,8 +149,17 @@ async function main() {
     
     // compiles and links the shaders, looks up attribute and uniform locations
     const meshProgramInfo = webglUtils.createProgramInfo(gl, [vs, fs]);
-    
-    const response = await fetch('./test/cube.obj');  
+    let response
+    if (path) {
+        let paths = path.split('/');
+        console.log(paths)
+        const objectPath = await callRoute(paths[2]);
+        response = await fetch(objectPath);
+        console.log(objectPath);
+    } else {
+        console.log('2' + path);
+        response = await fetch('./test/cube.obj');  
+    }
     const text = await response.text();
     const data = parseOBJ(text);
     
@@ -207,5 +234,3 @@ async function main() {
     }
     requestAnimationFrame(render);
 }
-
-main();

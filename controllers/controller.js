@@ -55,15 +55,40 @@ const uploadFile = async (req, res) => {
 const viewFile = async (req, res) => {
     try {
         const id = req.params.id;
-        console.log(id);
+        // console.log(id);
         // Find document by id
         const modelData = await ModelData.findOne(
             {
                 dataId: id,
             }
         )
-        console.log(modelData)
+        // console.log(modelData)
         res.render('viewer.html');
+        // viewer.main(modelData.path);
+        // return modelData.path;
+    } catch (err) {
+        res.status(500).send(err);
+    }
+}
+
+const getPath = async (req, res) => {
+    try {
+        console.log('objecttttt');
+        const modelData = await ModelData.findOne(
+            {
+                dataId: req.params.id,
+            }
+        )
+        console.log(modelData);
+        viewer.main(modelData.path);
+        res.send({
+            status: true,
+            message: 'Has path',
+            data: {
+                path: modelData.path,
+            }
+        });
+        // return modelData.path;
     } catch (err) {
         res.status(500).send(err);
     }
@@ -73,4 +98,5 @@ module.exports = {
     test,
     uploadFile,
     viewFile,
+    getPath,
 }
