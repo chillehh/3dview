@@ -72,34 +72,21 @@ const viewFile = async (req, res) => {
     }
 }
 
-const getPath = async (req, res) => {
-    try {
-        console.log('objecttttt');
-        const modelData = await ModelData.findOne(
-            {
-                dataId: req.params.id,
-            }
-        )
-        console.log(modelData);
-        
-        const response = await axios.get(
-          modelData.path,
-          { responseType: 'arraybuffer' }
-        );
-        const buffer = Buffer.from(response.data, 'utf-8');
-        res.status(200).send(buffer);
-        console.log(object);
-        res.set('Content-Type', 'application/json');
-        res.send(object.json());
-        // return modelData.path;
-    } catch (err) {
-        res.status(500).send(err);
-    }
+const downloadFile = async (req, res) => {
+    const modelData = await ModelData.findOne(
+        {
+            dataId: req.params.id,
+        }
+    )
+
+    const filePath = `${__dirname}/../${modelData.path}`;
+    console.log(filePath)
+    res.download(filePath);
 }
 
 module.exports = {
     test,
     uploadFile,
     viewFile,
-    getPath,
+    downloadFile
 }

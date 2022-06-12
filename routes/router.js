@@ -9,6 +9,6 @@ router.post('/upload', controller.uploadFile);
 
 router.get('/v/:id', controller.viewFile);
 
-router.get('/api/:id', controller.getPath);
+router.get('/files/download/:id', controller.downloadFile);
 
 module.exports = router

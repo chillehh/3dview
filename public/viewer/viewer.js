@@ -88,21 +88,6 @@ function parseOBJ(text) {
     };
 }
 
-async function callRoute(id) {
-    console.log(id + ' has id ' + window.location.origin);
-    const url = window.location.origin + '/api/' + id;
-    console.log(url);
-    let path;
-    await fetch(url)
-        .then(async response =>  {
-            path = await response.json();
-            console.log(path);
-            // response.json();
-        })
-    console.log('HAAS PATH: ' + path);
-    return path;
-}
-
 async function main(path) {
     // Get A WebGL context
     /** @type {HTMLCanvasElement} */
@@ -149,10 +134,7 @@ async function main(path) {
     let response
     if (path) {
         let paths = path.split('/');
-        console.log(paths)
-        const objectPath = await callRoute(paths[2]);
-        response = await fetch(objectPath);
-        console.log(objectPath);
+        response = await fetch(window.location.origin + '/files/download/' + paths[2]);
     } else {
         console.log('2' + path);
         response = await fetch('./test/cube.obj');  
