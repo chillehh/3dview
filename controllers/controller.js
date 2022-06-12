@@ -1,10 +1,6 @@
-const { response } = require('express');
-const axios = require('axios');
 const _ = require('lodash');
 const { v4: uuid } = require('uuid');
-const bodyParser = require('body-parser');
 const ModelData = require('../models/modelData')
-var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 const test = async (req, res) => {
     res.render('index.html');
@@ -18,21 +14,14 @@ const uploadFile = async (req, res) => {
                 message: 'No file uploaded'
             });
         } else {
-            console.log(__dirname);
-            console.log(req.files);
             let file = req.files.fileInput;
-            console.log('A');
             // Split by all dots, grab last element in array
             let dots = _.split(file.name, '.')
-            console.log('B');
             let extension = dots[dots.length - 1]
             let id
-            console.log('c');
-            console.log(req.files);
             if (extension !== undefined && extension === 'obj') {
                 console.log('HAVE extension, > add to db')
                 id = uuid();
-                console.log(id)
                 let urls = _.split(id, '-')
                 let url = urls[0]
                 const newModelData = new ModelData({
@@ -55,18 +44,7 @@ const uploadFile = async (req, res) => {
 
 const viewFile = async (req, res) => {
     try {
-        const id = req.params.id;
-        // console.log(id);
-        // Find document by id
-        const modelData = await ModelData.findOne(
-            {
-                dataId: id,
-            }
-        )
-        // console.log(modelData)
         res.render('viewer.html');
-        // viewer.main(modelData.path);
-        // return modelData.path;
     } catch (err) {
         res.status(500).send(err);
     }
@@ -78,7 +56,6 @@ const downloadFile = async (req, res) => {
             dataId: req.params.id,
         }
     )
-
     const filePath = `${__dirname}/../${modelData.path}`;
     console.log(filePath)
     res.download(filePath);
