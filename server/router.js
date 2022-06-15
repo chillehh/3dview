@@ -1,7 +1,7 @@
 const express = require('express');
 
 const router = express.Router();
-const controller = require('../controllers/controller.js');
+const controller = require('./controllers/controller.js');
 
 router.get('/', controller.test);
 
@@ -11,4 +11,4 @@ router.get('/v/:id', controller.viewFile);
 
 router.get('/files/download/:id', controller.downloadFile);
 
-module.exports = router
+module.exports = router;
