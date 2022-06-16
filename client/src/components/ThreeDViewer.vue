@@ -21,10 +21,9 @@
 </template>
 
 <script>
-import { v4 as uuid } from 'uuid'
-import _ from 'lodash'
+
 export default {
-  name: 'UploadModel',
+  name: 'ThreeDViewer',
   data() {
     return {
       file: undefined,
@@ -36,11 +35,6 @@ export default {
   methods: {
     redirect() {
       console.log('uploaded file: ')
-      // TODO: Use route on backend to save to db and then return viewer showing model
-      this.$router.push({ name: 'ThreeDViewer', params: { id: this.generateId() } });
-    },
-    generateId() {
-      return _.toString(uuid()).split('-')[0]
     },
   },
 }
