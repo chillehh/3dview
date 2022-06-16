@@ -11,7 +11,7 @@
   <div class="h-100 d-flex align-items-center justify-content-center">
     <form @submit="redirect" class="uploadForm">
       <div class="d-flex justify-content-center">
-        <input type="file" class="custom-file-input" id="uploadFile" required accept=".obj">
+        <input @input="file = $event.target.value" type="file" class="custom-file-input" id="uploadFile" required accept=".obj">
       </div>
       <div class="d-flex justify-content-center">
         <button class="btn btn-primary" type="submit">Upload Model!</button>
@@ -23,6 +23,8 @@
 <script>
 import { v4 as uuid } from 'uuid'
 import _ from 'lodash'
+import UploadService from '@/services/dataService'
+
 export default {
   name: 'UploadModel',
   data() {
@@ -34,9 +36,12 @@ export default {
     msg: String
   },
   methods: {
-    redirect() {
+    async redirect() {
       console.log('uploaded file: ')
       // TODO: Use route on backend to save to db and then return viewer showing model
+      console.log(this.file);
+      const result = await UploadService.upload(this.generateId(), this.file);
+      console.log(result);
       this.$router.push({ name: 'ThreeDViewer', params: { id: this.generateId() } });
     },
     generateId() {
