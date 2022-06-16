@@ -26,7 +26,7 @@ const uploadFile = async (req, res) => {
                 let url = urls[0]
                 const newModelData = new ModelData({
                     dataId: url,
-                    path: "./uploads/" + file.name,
+                    path: "../uploads/" + file.name,
                 })
                 await newModelData.save();
             }

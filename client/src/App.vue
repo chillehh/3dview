@@ -1,21 +1,24 @@
 <template>
   <HomePage/>
+  <UploadModel/>
 </template>
 
 <script>
 import HomePage from './components/HomePage.vue'
+import UploadModel from './components/UploadModel.vue'
 
 export default {
   name: 'App',
   components: {
-    HomePage
+    HomePage,
+    UploadModel
   }
 }
 </script>
 
-<style>
+<style scoped>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
