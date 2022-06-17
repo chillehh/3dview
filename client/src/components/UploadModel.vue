@@ -29,7 +29,6 @@ export default {
       this.file = this.$refs.fileInput.files[0];
       await UploadService.upload(this.file)
         .then(r => {
-          console.log('r: ', r);
           this.$router.push({ name: 'ModelViewer', params: { modelId: r.data } });
         });
     },

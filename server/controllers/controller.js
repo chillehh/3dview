@@ -24,7 +24,6 @@ const uploadFile = async (req, res) => {
                 id = uuid();
                 let urls = _.split(id, '-')
                 let url = urls[0]
-                console.log(file)
                 const newModelData = new ModelData({
                     url: url,
                     path: "./uploads/" + file.filename,
@@ -53,7 +52,7 @@ const viewFile = async (req, res) => {
 const downloadFile = async (req, res) => {
     const modelData = await ModelData.findOne(
         {
-            dataId: req.params.id,
+            url: req.params.id,
         }
     )
     const filePath = `${__dirname}/../${modelData.path}`;
