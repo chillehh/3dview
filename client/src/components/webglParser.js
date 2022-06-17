@@ -1,8 +1,6 @@
 /* eslint-disable */
 class WebglParser {
-    parseOBJ(canvas, text) {
-        const gl = canvas.getContext('webgl')
-        console.log('has webgl context: ', gl, canvas)
+    parseOBJ(data) {
         // because indices are base 1 let's just fill in the 0th data
         const objPositions = [[0, 0, 0]];
         const objTexcoords = [[0, 0]];
@@ -63,7 +61,7 @@ class WebglParser {
         };
         
         const keywordRE = /(\w*)(?: )*(.*)/;
-        const lines = text.split('\n');
+        const lines = data.split('\n');
         for (let lineNo = 0; lineNo < lines.length; ++lineNo) {
             const line = lines[lineNo].trim();
             if (line === '' || line.startsWith('#')) {
@@ -132,16 +130,6 @@ class WebglParser {
         
         // compiles and links the shaders, looks up attribute and uniform locations
         const meshProgramInfo = webglUtils.createProgramInfo(gl, [vs, fs]);
-        // let response
-        // if (path) {
-        //     let paths = path.split('/');
-        //     response = await fetch(window.location.origin + '/files/download/' + paths[2]);
-        // } else {
-        //     console.log('2' + path);
-        //     response = await fetch('./test/cube.obj');  
-        // }
-        // const text = await response.text();
-        // const data = this.parseOBJ(text);
 
         // Because data is just named arrays like this
         //

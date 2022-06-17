@@ -21,9 +21,6 @@ export default {
       file: undefined,
     } 
   },
-  props: {
-    msg: String
-  },
   methods: {
     async redirect() {
       this.file = this.$refs.fileInput.files[0];
