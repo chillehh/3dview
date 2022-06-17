@@ -3,7 +3,7 @@ var Schema = mongoose.Schema
 
 const modelDataShema = new mongoose.Schema({
     id: Schema.Types.ObjectId,
-    dataId: String,
+    url: String,
     path: String  
 }, {collection: 'modelData'})
 

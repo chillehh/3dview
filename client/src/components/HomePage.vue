@@ -1,14 +1,19 @@
 <template>
   <div class="home">
     <h1>Welcome to the home page.</h1>
-    <p>This will be where you can upload and view 3D models</p>
+    <p>This will be where you can upload 3D models</p>
   </div>
+  <UploadModel/>
 </template>
 
 <script>
+import UploadModel from './UploadModel.vue'
 
 export default {
-  name: 'HomePage'
+  name: 'HomePage',
+  components: {
+    UploadModel,
+  },
 }
 </script>
 

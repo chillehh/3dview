@@ -1,18 +1,10 @@
 <template>
-  <HomePage/>
-  <UploadModel/>
+  <router-view/>
 </template>
 
 <script>
-import HomePage from './components/HomePage.vue'
-import UploadModel from './components/UploadModel.vue'
-
 export default {
-  name: 'App',
-  components: {
-    HomePage,
-    UploadModel
-  }
+  name: 'App'
 }
 </script>
 

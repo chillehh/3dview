@@ -1,6 +1,6 @@
 import { createWebHistory, createRouter } from "vue-router";
 import HomePage from "@/components/HomePage.vue";
-import ThreeDViewer from "@/components/ThreeDViewer.vue";
+import ModelViewer from "@/components/ModelViewer.vue";
 
 const routes = [
 {
@@ -9,9 +9,10 @@ const routes = [
     component: HomePage,
 },
 {
-    path: "/v/:id",
-    name: "ThreeDViewer",
-    component: ThreeDViewer,
+    path: `/v/:modelId`,
+    name: "ModelViewer",
+    component: ModelViewer,
+    props: true,
 },
 ];
 
