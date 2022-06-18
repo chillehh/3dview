@@ -6,13 +6,17 @@ class Shader {
             this.gl = gl;
             gl.useProgram(this.program);
             this.attribLoc = ShaderUtil.getStandardAttribLocations(gl, this.program);
-            this.uniformLoc = {}; // TODO: replace with get standardUniformLocations
+            this.uniformLoc = ShaderUtil.getStandardAttribLocations(gl, this.program);
         }
     }
 
     // Methods
     activate() { this.gl.useProgram(this.program); return this; }
     deactivate() { this.gl.useProgram(null); return this; }
+
+    setPerspective(matData) { this.gl.uniformMatrix4fv(this.uniformLoc.perspective, false, matData); return this; }
+    setModelMatrix(matData) { this.gl.uniformMatrix4fv(this.uniformLoc.modelMatrix, false, matData); return this; }
+    setCameraMatrix(matData) { this.gl.uniformMatrix4fv(this.uniformLoc.cameraMatrix, false, matData); return this; }
 
     // Cleans up resources when shader is no longer needed
     dispose() {
@@ -26,6 +30,7 @@ class Shader {
 
     // Handle rendering a model
     renderModel(model) {
+        this.setModelMatrix(model.transform.getViewMatrix());
         this.gl.bindVertextArray(model.mesh.vao);
 
         if (model.mesh.indexCount) {

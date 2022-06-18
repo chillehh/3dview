@@ -81,4 +81,13 @@ class ShaderUtil {
             uv:       gl.getAttribLocation(program, ATTR_UV_NAME)
         }
     }
+
+    static getStandardUniformLocations(gl, program) {
+        return {
+            perspective:  gl.getUniformLocation(program, 'uPMatrix'),
+            modelMatrix:  gl.getUniformLocation(program, 'uMVMatrix'),
+            cameraMatrix: gl.getUniformLocation(program, 'uCameraMatrix'),
+            mainTexture:  gl.getUniformLocation(program, 'uMainTex')
+        };
+    }
 }

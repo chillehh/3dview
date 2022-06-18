@@ -19,11 +19,18 @@ function WebglInstance(canvasId) {
 
     // Setup custom properties
     gl.mMeshCache = []; // Cache all the mesh structs for easy unloading of buffers
-
-    // Setup webgl
+    
+    gl.cullFace(gl.BACK);
+    gl.frontFace(gl.CCW);
+    gl.enable(DEPTH_TEST);
+    gl.enable(gl.CULL_FACE);
+    gl.depthFunc(gl.LEQUAL);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     gl.clearColor(1.0, 1.0, 1.0, 1.0);
 
     // Methods
+    // Setup webgl
+    gl.clearColor(1.0, 1.0, 1.0, 1.0);
 
     // Reset the canvas with our set bg colour
     gl.clear = function() { 
@@ -113,6 +120,10 @@ function WebglInstance(canvasId) {
         // When updating canvas size, reset vieport of canvas so webgl renders in correct resolution
         this.viewport(0, 0, w, h);
         return this;
+    }
+
+    gl.fitScreen = function(wp, hp) {
+        return this.setSize(window.innerWidth * (wp || 1), window.innerHeight * (hp || 1));
     }
 
     return gl;

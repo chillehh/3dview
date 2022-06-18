@@ -32,4 +32,16 @@ class Transform {
 
         return this.matView.raw;
     }
+
+    getViewMatrix() { return this.matView.raw; }
+    getNormalMatrix() { return this.matNormal; }
+
+    reset() {
+        this.position.set(0, 0, 0);
+        this.scale.set(1, 1, 1);
+        this.rotation.set(0, 0, 0);
+
+    }
 }
+
+Transform.deg2Rad = Math.PI / 180;
