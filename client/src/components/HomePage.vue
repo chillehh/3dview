@@ -12,7 +12,7 @@ import UploadModel from './UploadModel.vue'
 export default {
   name: 'HomePage',
   components: {
-    UploadModel,
+    UploadModel
   },
 }
 </script>

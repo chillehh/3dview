@@ -8,8 +8,6 @@ const upload = multer({ dest: './uploads/' });
 
 router.post('/api/upload', upload.single('file'), controller.uploadFile);
 
-// router.get('/v/:id', controller.viewFile);
-
 router.get('/api/model/:id', controller.downloadFile);
 
 module.exports = router;

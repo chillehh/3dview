@@ -62,6 +62,7 @@ class WebglParser {
         
         const keywordRE = /(\w*)(?: )*(.*)/;
         const lines = data.split('\n');
+        // console.log(lines)
         for (let lineNo = 0; lineNo < lines.length; ++lineNo) {
             const line = lines[lineNo].trim();
             if (line === '' || line.startsWith('#')) {
@@ -72,13 +73,15 @@ class WebglParser {
                 continue;
             }
             const [, keyword, unparsedArgs] = m;
-            const parts = line.split(/\s+/).slice(1);
+            const parts = unparsedArgs.split(/\s+/);
             const handler = keywords[keyword];
+            // console.log(keyword)
             if (!handler) {
                 console.warn('unhandled keyword:', keyword);  // eslint-disable-line no-console
                 continue;
             }
-            handler(parts, unparsedArgs);
+            // console.log('UNPARSED: ', parts)
+            handler(parts);
         }
         
         return {
@@ -88,10 +91,9 @@ class WebglParser {
         };
     }
 
-    
     async render(canvas, data) {
         // Get A WebGL context
-        const gl = canvas.getContext("webgl");
+        const gl = canvas.getContext("webgl2");
         if (!gl) {
             return;
         }
@@ -146,11 +148,42 @@ class WebglParser {
         // create a buffer for each array by calling
         // gl.createBuffer, gl.bindBuffer, gl.bufferData
         const bufferInfo = webglUtils.createBufferInfoFromArrays(gl, data);
+        const position = data.position
+        console.log(data)
+        let yPositions = []
+        let xPositions = []
+        let zPositions = []
+        let i = 0
+        while (i < position.length) {
+            xPositions.push(position[i])
+            zPositions.push(position[i + 1])
+            yPositions.push(position[i + 2])
+            i += 3
+        }
+        // console.log(yPositions)
+        const xSorted = xPositions.sort((a, b) => a - b);
+        const ySorted = yPositions.sort((a, b) => a - b);
+        const zSorted = zPositions.sort((a, b) => a - b);
+        const xMax = Math.abs(xSorted[xSorted.length - 1]);
+        const xMin = Math.abs(xSorted[0]);
+        const yMax = Math.abs(ySorted[ySorted.length - 1]);
+        const yMin = Math.abs(ySorted[0]);
+        const zMax = Math.abs(zSorted[zSorted.length - 1]);
+        const zMin = Math.abs(zSorted[0]);
+        const xDelta = xMax - xMin
+        const yDelta = yMax - yMin
+        const zDelta = zMax - zMin
+        const xMid = xDelta / 2
+        const yMid = yDelta / 2
+        const zMid = zDelta / 2
+        // const cameraZ = (max - min) * -1.25
+        console.log('xMID: ', xMid, ' yMID: ', yMid, ' zMID: ', zMid)
 
-        const cameraTarget = [0, 0, 0];
-        const cameraPosition = [0, 0, 4];
+        const cameraTarget = [xMid, yMid, zMid];
+        // const cameraPosition = [0, 0, cameraZ < -5 ? cameraZ : 5];
+        const cameraPosition = [xMid, yMid, zMid + 20];
         const zNear = 0.1;
-        const zFar = 50;
+        const zFar = 500;
 
         function degToRad(deg) {
             return deg * Math.PI / 180;

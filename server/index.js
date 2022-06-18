@@ -15,13 +15,13 @@ const router = require('./router');
 app.use('/', router)
 
 //Allows file uploads
-const fileUpload = require('express-fileupload');
-app.use(fileUpload({
-    createParentPath: true,
-    limits: { 
-        fileSize: 200 * 1024 * 1024 * 1024 //200MB max file(s) size
-    },
-}));
+// const fileUpload = require('express-fileupload');
+// app.use(fileUpload({
+//     createParentPath: true,
+//     limits: { 
+//         fileSize: 200 * 1024 * 1024 * 1024 //200MB max file(s) size
+//     },
+// }));
 
 const host = 'localhost';
 const port = process.env.PORT || 8000;

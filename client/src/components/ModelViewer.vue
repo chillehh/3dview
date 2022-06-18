@@ -2,7 +2,7 @@
   <div class="viewer">
     <h1>ModelViewer.</h1>
     <p>This will be where you can view 3D models</p>
-    <canvas ref="canvas"></canvas>
+    <canvas ref="canvas" id="canvas"></canvas>
   </div>
 </template>
 
@@ -35,6 +35,7 @@ export default {
       // Call a get route to get the model from the server and load it into webgl
       GetService.getFile(this.modelId)
         .then(r => {
+          console.log(r.data)
           // Parse data from .obj to webgl format
           const webglData = WebglParser.parseOBJ(r.data)
           // Render model
@@ -66,5 +67,10 @@ export default {
 
   p {
       font-size: 24px;
+  }
+
+  #canvas {
+    width: 100%;
+    height: 100%;
   }
 </style>

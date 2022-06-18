@@ -1,6 +1,6 @@
 # client
 
-## Project setup
+## Project setup in /client
 ```
 npm install
 ```
