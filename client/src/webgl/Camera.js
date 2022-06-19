@@ -1,4 +1,7 @@
-class Camera {
+import { Matrix4 } from "./Math";
+import { Transform } from './Transform'
+
+export class Camera {
     constructor(gl, fov, near, far) {
         // Setup perspective matrix
         this.projectionMatrix = new Float32Array(16);
@@ -60,6 +63,12 @@ class Camera {
         // Cameras work by doing the inverse transformation on all meshes
         Matrix4.invert(this.viewMatrix, this.transform.matView.raw);
         return this.viewMatrix;
+    }
+
+    getTranslatelessMatrix() {
+        var mat = new Float32Array(this.viewMatrix);
+        mat[12] = mat[13] = mat[14] = 0.0;
+        return mat;
     }
 }
 

@@ -1,4 +1,6 @@
-class ShaderUtil {
+import { ATTR_POSITION_NAME, ATTR_POSITION_LOC, ATTR_NORMAL_NAME, ATTR_NORMAL_LOC, ATTR_UV_NAME, ATTR_UV_LOC } from '@/webgl/gl.js'
+
+export class ShaderUtil {
     static domShaderSrc(elementId) {
         var elm = document.getElementById(elementId);
         if (!elm || elm.text == '') {
@@ -14,7 +16,7 @@ class ShaderUtil {
         gl.compileShader(shader);
 
         if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-            console.error('Error compiling shader: ' + src, gl.getShaderInfoLog(shader));
+            console.error('Error compiling shader: ', src, gl.getShaderInfoLog(shader));
             gl.deleteShader(shader);
             return undefined;
         }

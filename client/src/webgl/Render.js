@@ -1,4 +1,4 @@
-class Render {
+export class Render {
     constructor(callback, fps) {
         var This = this;
         this.msLastFrame = null;    // Time in ms of the last frame
@@ -6,7 +6,7 @@ class Render {
         this.isActive = false;      // Control the on/off states of rendering
         this.fps = 0;               // The frames per second of the loop
 
-        if (!fps && fps > 0) {
+        if (fps != undefined && fps > 0) {
             this.msFpsLimit = 1000/fps; // How many ms per frame in one second
 
             this.run = function() {

@@ -1,4 +1,6 @@
-class Transform {
+import { Vector3, Matrix4 } from "./Math";
+
+export class Transform {
     constructor() {
         // Transform vectors
         this.position = new Vector3(0, 0, 0); // x, y, z position
@@ -32,6 +34,13 @@ class Transform {
 
         return this.matView.raw;
     }
+
+    updateDirection(){
+		Matrix4.transformVec4(this.forward,	[0,0,1,0],this.matView.raw);
+		Matrix4.transformVec4(this.up,		[0,1,0,0],this.matView.raw);
+		Matrix4.transformVec4(this.right,	[1,0,0,0],this.matView.raw);
+		return this;
+	}
 
     getViewMatrix() { return this.matView.raw; }
     getNormalMatrix() { return this.matNormal; }

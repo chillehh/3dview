@@ -1,4 +1,4 @@
-class CameraController {
+export class CameraController {
     constructor(gl, camera) {
         var This = this;
         var box = gl.canvas.getBoundingClientRect();
@@ -36,6 +36,7 @@ class CameraController {
     }
 
     // Finish listening for drag
+    // eslint-disable-next-line
     onMouseUp(e) {
         this.canvas.removeEventListener('mouseup', this.onUpHandler);
         this.canvas.removeEventListener('mousemove', this.onMoveHandler);

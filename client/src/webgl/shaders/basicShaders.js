@@ -1,31 +1,28 @@
 export const vertex_shader = `
-    #version 300 es
-    in vec3 a_position;
-    uniform float uAngle;
-    uniform mediump float uPointSize;
-    out vec3 size;
+attribute vec4 a_position;
+attribute vec3 a_normal;
 
-    void main(void){
-        gl_PointSize = uPointSize;
-        size = uPointSize;
-        gl_Position = vec4(
-            cos(uAngle) * 0.8 + a_position.x,
-            sin(uAngle) * 0.8 + a_position.y,
-            a_position.z, 1.0
-        );
-    }
-    `
+uniform mat4 u_projection;
+uniform mat4 u_view;
+uniform mat4 u_world;
+
+varying vec3 v_normal;
+
+void main() {
+    gl_Position = u_projection * u_view * u_world * a_position;
+    v_normal = mat3(u_world) * a_normal;
+}`
 
 export const fragment_shader = `
-    #version 300 es
-    precision mediump float;
+precision mediump float;
 
-    uniform float uPointSize;
-    in vec3 size;
-    out vec4 finalColour;
+varying vec3 v_normal;
 
-    void main(void){
-        float c = (40.0 - uPointSize) / 20.0;
-        finalColour = vec4(c, c, c, 1.0);
-    }
-    `
+uniform vec4 u_diffuse;
+uniform vec3 u_lightDirection;
+
+void main () {
+    vec3 normal = normalize(v_normal);
+    float fakeLight = dot(u_lightDirection, normal) * .5 + .5;
+    gl_FragColor = vec4(u_diffuse.rgb * fakeLight, u_diffuse.a);
+}`

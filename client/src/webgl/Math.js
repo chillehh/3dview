@@ -1,5 +1,5 @@
-//###########################################################################################
-class Vector3{
+/* eslint-disable */
+export class Vector3{
 	constructor(x,y,z){	this.x = x || 0.0;	this.y = y || 0.0;	this.z = z || 0.0; }
 
 	magnitude(v){
@@ -27,7 +27,7 @@ class Vector3{
 
 
 //###########################################################################################
-class Matrix4{
+export class Matrix4{
 	constructor(){ this.raw = Matrix4.identity(); }
 
 	//....................................................................

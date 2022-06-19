@@ -1,4 +1,6 @@
-class Model {
+import { Transform } from '@/webgl/Transform'
+
+export class Model {
     constructor(meshData) {
         this.transform = new Transform();
         this.mesh = meshData;
