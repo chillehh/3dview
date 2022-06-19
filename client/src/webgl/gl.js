@@ -68,12 +68,12 @@ export function WebglInstance(canvasId) {
         var buf = this.createBuffer();
         this.bindBuffer(this.ARRAY_BUFFER, buf);
         this.bufferData(this.ARRAY_BUFFER, floatArr, isStatic ? this.STATIC_DRAW : this.DYNAMIC_DRAW);
-        this.bindBuffer(this.ARRAY_BUFFER, undefined);
+        this.bindBuffer(this.ARRAY_BUFFER, null);
         return buf;
     }
 
     // Turns arrays in GL buffers, then sets up a VAO that will predefine the buffers to standard shader attributes
-    gl.createMeshVAO = function(name, arrIdx, arrVert, arrNorm, arrUV) {
+    gl.createMeshVAO = function(name, arrIdx, arrVert, arrNorm, arrUV, vertLen) {
         var rtn = { drawMode: this.TRIANGLES };
 
         // Create and bind VAO
@@ -82,22 +82,22 @@ export function WebglInstance(canvasId) {
         this.bindVertexArray(rtn.vao);
 
         // Setup vertices
-        if (arrVert) {
+        if (arrVert !== undefined && arrVert != null) {
             // Create buffer
             rtn.bufVertices = this.createBuffer();
             // How big each vertex is
-            rtn.vertexComponentLen = 3;
+            rtn.vertexComponentLen = vertLen || 3;
             // How many vertices per array
             rtn.vertexCount = arrVert.length / rtn.vertexComponentLen;
 
             this.bindBuffer(this.ARRAY_BUFFER, rtn.bufVertices);
             this.bufferData(this.ARRAY_BUFFER, new Float32Array(arrVert), this.STATIC_DRAW);
             this.enableVertexAttribArray(ATTR_POSITION_LOC);
-            this.vertexAttribPointer(ATTR_POSITION_LOC, 3, this.FLOAT, false, 0, 0);
+            this.vertexAttribPointer(ATTR_POSITION_LOC, rtn.vertexComponentLen, this.FLOAT, false, 0, 0);
         }
 
         // Setup normals
-        if (arrNorm) {
+        if (arrNorm !== undefined && arrNorm != null) {
             rtn.bufNormals = this.createBuffer();
             this.bindBuffer(this.ARRAY_BUFFER, rtn.bufNormals);
             this.bufferData(this.ARRAY_BUFFER, new Float32Array(arrNorm), this.STATIC_DRAW);
@@ -106,7 +106,7 @@ export function WebglInstance(canvasId) {
         }
 
         // Setup UVs
-        if (arrUV) {
+        if (arrUV !== undefined && arrUV != null) {
             rtn.bufUV = this.createBuffer();
             this.bindBuffer(this.ARRAY_BUFFER, rtn.bufUV);
             this.bufferData(this.ARRAY_BUFFER, new Float32Array(arrUV), this.STATIC_DRAW);
@@ -115,18 +115,20 @@ export function WebglInstance(canvasId) {
         }
 
         // Setup index
-        if (arrIdx) {
+        if (arrIdx !== undefined && arrIdx != null) {
             rtn.bufIndex = this.createBuffer();
             rtn.indexCount = arrIdx.length;
             this.bindBuffer(this.ELEMENT_ARRAY_BUFFER, rtn.bufIndex);
             this.bufferData(this.ELEMENT_ARRAY_BUFFER, new Uint16Array(arrIdx), this.STATIC_DRAW);
-            this.bindBuffer(this.ELEMENT_ARRAY_BUFFER, null);
+            // this.bindBuffer(this.ELEMENT_ARRAY_BUFFER, null);
         }
 
         // Clean up
         this.bindVertexArray(null);
         this.bindBuffer(this.ARRAY_BUFFER, null);
-
+        if (arrIdx != null && arrIdx !== undefined) {
+            this.bindBuffer(this.ELEMENT_ARRAY_BUFFER, null);
+        }
         this.mMeshCache[name] = rtn;
         return rtn;
     }

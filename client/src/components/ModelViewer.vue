@@ -8,12 +8,12 @@
 
 <script>
 import GetService from '@/services/GetService'
-// import WebglParser from '@/components/webglParser.js'
+import WebglParser from '@/components/webglParser.js'
 import {WebglInstance} from '@/webgl/gl.js'
-import { Model } from '@/webgl/Model.js'
+// import { Model } from '@/webgl/Model.js'
 import { Camera } from '@/webgl/Camera.js'
 import { CameraController } from '@/webgl/CameraController.js'
-import { OBJ } from '@/webgl/utils/parseOBJ.js'
+// import { OBJ } from '@/webgl/utils/parseOBJ.js'
 import { Render } from '@/webgl/Render.js'
 import { GridAxisShader } from '@/webgl/shaders/GridAxisShader.js'
 import { TestShader } from '@/webgl/shaders/TestShader.js'
@@ -51,7 +51,10 @@ export default {
     // m4.onload = () => this.loader += 1
     
     // Load model from server
-    this.getModel();
+    // this.getModel();
+
+    // Load model from primative
+    this.initWebgl()
   },
   methods: {
     getModel() {
@@ -60,14 +63,14 @@ export default {
         .then(r => {
           console.log(r.data)
           // Parse data from .obj to webgl format
-          const webglData = OBJ.parseText(r.data, true);
-          // const webglData = WebglParser.parseOBJ(r.data);
+          // const webglData = OBJ.parseText(r.data, true);
+          const webglData = WebglParser.parseOBJ(r.data);
           // Render model
           this.initWebgl(webglData);
           // WebglParser.render(this.$refs.canvas, webglData)
         });
     },
-    initWebgl(webglData) {
+    initWebgl() {
       // Setup GLInstance
       this.gl = WebglInstance('glcanvas');
       this.gl.fitScreen(0.65, 0.6);
@@ -78,8 +81,8 @@ export default {
 
       // Load resources
       this.gShader = new TestShader(this.gl, this.gCamera.projectionMatrix);
-      this.gModel = new Model(webglData);
-      this.gModel.setPosition(0, 0, 0);
+      this.gModel = Primatives.Cube.createModel(this.gl);
+      this.gModel.setPosition(0, 0.6, 0);
       this.gModel.setScale(0.5, 0.5, 0.5);
 
       // Setup grid
@@ -92,7 +95,6 @@ export default {
     },
     // eslint-disable-next-line
     onRender(dt) {
-      console.log('rendering new frame..')
       this.gCamera.updateViewMatrix();
       this.gl.clearData();
 
@@ -100,9 +102,9 @@ export default {
       this.gGridShader.setCameraMatrix(this.gCamera.viewMatrix);
       this.gGridShader.renderModel(this.gGridModel.preRender());
       
-      this.gShader.activate();
-      this.gShader.setCameraMatrix(this.gCamera.viewMatrix)
-      this.gShader.renderModel(this.gModel.preRender());
+      // this.gShader.activate();
+      // this.gShader.setCameraMatrix(this.gCamera.viewMatrix)
+      // this.gShader.renderModel(this.gModel.preRender());
     },
   },
   // watch: {

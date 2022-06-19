@@ -4,7 +4,7 @@ import { ATTR_POSITION_LOC } from "./gl.js";
 export var Primatives = {};
 
 Primatives.Cube = class {
-	static createModal(gl){ return new Model(Primatives.Cube.createMesh(gl, name || 'Cube',1,1,1,0,0,0)); }
+	static createModel(gl){ return new Model(Primatives.Cube.createMesh(gl, name || 'Cube',1,1,1,0,0,0)); }
 	static createMesh(gl, name, width, height, depth, x, y, z){
 		var w = width*0.5, h = height*0.5, d = depth*0.5;
 		var x0 = x-w, x1 = x+w, y0 = y-h, y1 = y+h, z0 = z-d, z1 = z+d;
@@ -63,7 +63,7 @@ Primatives.Cube = class {
 		]
 
 		var mesh = gl.createMeshVAO(name, aIndex, aVert, aNorm, aUV, 4);
-		mesh.noCulling = true;	// TODO: Only setting this true to view animations better.
+		// mesh.noCulling = true;	// TODO: Only setting this true to view animations better.
 		return mesh;
 	}
 }
@@ -85,7 +85,7 @@ Primatives.Quad = class {
 }
 
 Primatives.GridAxis = class {
-    static createModel(gl, inclAxis) { return new Model(Primatives.GridAxis.createMesh(gl, inclAxis)); }
+    static createModel(gl, inclAxis) { console.log('creating grid..'); return new Model(Primatives.GridAxis.createMesh(gl, inclAxis)); }
     static createMesh(gl, inclAxis) {
         var verts = [],
             size = 2,
