@@ -28,7 +28,6 @@ export class ShaderUtil {
         var prog = gl.createProgram();
         gl.attachShader(prog, vShader);
         gl.attachShader(prog, fShader);
-        gl.linkProgram(prog);
 
         // Force predefined locations for specific attributes. The default will be -1 if attribute not used in the shader
         gl.bindAttribLocation(prog, ATTR_POSITION_LOC, ATTR_POSITION_NAME);
@@ -41,7 +40,7 @@ export class ShaderUtil {
         if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
             console.error('Error creating shader program: ', gl.getProgramInfoLog(prog));
             gl.deleteProgram(prog);
-            return undefined;
+            return null;
         }
 
         // Only doing for additional debugging
@@ -49,7 +48,7 @@ export class ShaderUtil {
             gl.validateProgram(prog);
             if (!gl.getProgramParameter(prog, gl.VALIDATE_STATUS)) {
                 console.error('Error validating program: ', gl.getProgramInfoLog(prog));
-                return undefined;
+                return null;
             }
         }
 

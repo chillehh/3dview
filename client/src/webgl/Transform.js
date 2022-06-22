@@ -17,12 +17,12 @@ export class Transform {
 
     // Methods
     updateMatrix() {
-        this.matView.reset()
-            .vtranslate(this.position)
-            .rotateX(this.rotation.x * Transform.deg2Rad)
-            .rotateZ(this.rotation.z * Transform.deg2Rad)
-            .rotateY(this.rotation.y * Transform.deg2Rad)
-            .vscale(this.scale);
+        this.matView.reset();
+        this.matView.vtranslate(this.position);
+        this.matView.rotateX(this.rotation.x * Transform.deg2Rad);
+        this.matView.rotateZ(this.rotation.z * Transform.deg2Rad);
+        this.matView.rotateY(this.rotation.y * Transform.deg2Rad);
+        this.matView.vscale(this.scale);
         
         // Calculat normal matrix which doesn't need translate, then transpose and inverse the mat4 to a mat3
         Matrix4.normalMat3(this.matNormal, this.matView.raw);

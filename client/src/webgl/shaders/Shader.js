@@ -8,7 +8,7 @@ export class Shader {
             this.gl = gl;
             gl.useProgram(this.program);
             this.attribLoc = ShaderUtil.getStandardAttribLocations(gl, this.program);
-            this.uniformLoc = ShaderUtil.getStandardAttribLocations(gl, this.program);
+            this.uniformLoc = ShaderUtil.getStandardUniformLocations(gl, this.program);
         }
     }
 

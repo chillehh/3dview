@@ -8,19 +8,22 @@
 
 <script>
 import GetService from '@/services/GetService'
-import WebglParser from '@/components/webglParser.js'
+// import WebglParser from '@/components/webglParser.js'
 import {WebglInstance} from '@/webgl/gl.js'
 // import { Model } from '@/webgl/Model.js'
 import { Camera } from '@/webgl/Camera.js'
 import { CameraController } from '@/webgl/CameraController.js'
-// import { OBJ } from '@/webgl/utils/parseOBJ.js'
+import { OBJ } from '@/webgl/utils/parseOBJ.js'
 import { Render } from '@/webgl/Render.js'
-import { GridAxisShader } from '@/webgl/shaders/GridAxisShader.js'
+// import { GridAxisShader } from '@/webgl/shaders/GridAxisShader.js'
 import { TestShader } from '@/webgl/shaders/TestShader.js'
 // import { Shader } from '@/webgl/shaders/Shader.js'
 // import { ShaderUtil } from '@/webgl/shaders/shaderUtil.js'
 // import { Vector3, Matrix } from '@/webgl/Math.js'
-import { Primatives } from '@/webgl/Primatives.js'
+// import { Primatives } from '@/webgl/Primatives.js'
+// import { Model } from '@/webgl/Model'
+// import * as mat4 from '@/webgl/gl-matrix'
+import { Primatives } from '@/webgl/Primatives'
 export default {
   name: 'ModelViewer',
   data() {
@@ -63,8 +66,8 @@ export default {
         .then(r => {
           console.log(r.data)
           // Parse data from .obj to webgl format
-          // const webglData = OBJ.parseText(r.data, true);
-          const webglData = WebglParser.parseOBJ(r.data);
+          const webglData = OBJ.parseText(r.data, true);
+          // const webglData = WebglParser.parseOBJ(r.data);
           // Render model
           this.initWebgl(webglData);
           // WebglParser.render(this.$refs.canvas, webglData)
@@ -78,16 +81,19 @@ export default {
       this.gCamera = new Camera(this.gl);
       this.gCamera.transform.position.set(0, 1, 3);
       this.gCameraCtrl = new CameraController(this.gl, this.gCamera);
+      console.log(this.gCamera, this.gCameraCtrl)
 
       // Load resources
       this.gShader = new TestShader(this.gl, this.gCamera.projectionMatrix);
+      // this.gModel = new Model(this.gl.createMeshVAO('Model1', webglData[0], webglData[1], webglData[2], webglData[3], 4));
       this.gModel = Primatives.Cube.createModel(this.gl);
       this.gModel.setPosition(0, 0.6, 0);
       this.gModel.setScale(0.5, 0.5, 0.5);
+      console.log(this.gModel)
 
       // Setup grid
-      this.gGridShader = new GridAxisShader(this.gl, this.gCamera.projectionMatrix);
-      this.gGridModel = Primatives.GridAxis.createModel(this.gl, false);
+      // this.gGridShader = new GridAxisShader(this.gl, this.gCamera.projectionMatrix);
+      // this.gGridModel = Primatives.GridAxis.createModel(this.gl, false);
 
       // Begin rendering
       this.gRLoop = new Render(this.onRender, 30);
@@ -95,12 +101,25 @@ export default {
     },
     // eslint-disable-next-line
     onRender(dt) {
+      // console.log('rendering frame..', this.gModel)
+      // mat4.rotate(yRotationMatrix, identityMatrix, angle, [0, 1, 0]);
+      // mat4.rotate(xRotationMatrix, identityMatrix, angle / 4, [1, 0, 0]);
+      // mat4.mul(worldMatrix, yRotationMatrix, xRotationMatrix);
+      // this.gl.uniformMatrix4fv(matWorldUniformLocation, this.gl.FALSE, worldMatrix);
       this.gCamera.updateViewMatrix();
-      this.gl.clearData();
 
-      this.gGridShader.activate()
-      this.gGridShader.setCameraMatrix(this.gCamera.viewMatrix);
-      this.gGridShader.renderModel(this.gGridModel.preRender());
+      // this.gl.drawElements(gl.TRIANGLES, boxIndices.length, gl.UNSIGNED_SHORT, 0);
+      this.gShader.activate();
+      // console.log(this.gshader, this.gCamera.viewMatrix)
+      this.gShader.setCameraMatrix(this.gCamera.viewMatrix);
+
+      this.gl.clearColor(0.75, 0.85, 0.8, 1.0);
+      this.gl.clearData();
+      this.gShader.renderModel(this.gModel.preRender());
+
+      // this.gGridShader.activate()
+      // this.gGridShader.setCameraMatrix(this.gCamera.viewMatrix);
+      // this.gGridShader.renderModel(this.gGridModel.preRender());
       
       // this.gShader.activate();
       // this.gShader.setCameraMatrix(this.gCamera.viewMatrix)

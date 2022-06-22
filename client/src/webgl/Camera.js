@@ -47,15 +47,15 @@ export class Camera {
     // To have different modes of movements, this will handle the view matrix update for the transform object
     updateViewMatrix() {
         if (this.mode === Camera.MODE_FREE) {
-            this.transform.matView.reset()
-                .vtranslate(this.transform.position)
-                .rotateX(this.transform.rotation.x * Transform.deg2Rad)
-                .rotateY(this.transform.rotation.y * Transform.deg2Rad);
+            this.transform.matView.reset();
+            this.transform.matView.vtranslate(this.transform.position);
+            this.transform.matView.rotateX(this.transform.rotation.x * Transform.deg2Rad);
+            this.transform.matView.rotateY(this.transform.rotation.y * Transform.deg2Rad);
         } else {
-            this.transform.matView.reset()
-                .rotateX(this.transform.rotation.x * Transform.deg2Rad)
-                .rotateY(this.transform.rotation.y * Transform.deg2Rad)
-                .vtranslate(this.transform.position);
+            this.transform.matView.reset();
+            this.transform.matView.rotateX(this.transform.rotation.x * Transform.deg2Rad);
+            this.transform.matView.rotateY(this.transform.rotation.y * Transform.deg2Rad);
+            this.transform.matView.vtranslate(this.transform.position);
         }
 
         this.transform.updateDirection();
