@@ -15,13 +15,13 @@ import { Camera } from '@/webgl/Camera.js'
 import { CameraController } from '@/webgl/CameraController.js'
 import { OBJ } from '@/webgl/utils/parseOBJ.js'
 import { Render } from '@/webgl/Render.js'
-// import { GridAxisShader } from '@/webgl/shaders/GridAxisShader.js'
+import { GridAxisShader } from '@/webgl/shaders/GridAxisShader.js'
 import { TestShader } from '@/webgl/shaders/TestShader.js'
 // import { Shader } from '@/webgl/shaders/Shader.js'
 // import { ShaderUtil } from '@/webgl/shaders/shaderUtil.js'
 // import { Vector3, Matrix } from '@/webgl/Math.js'
 // import { Primatives } from '@/webgl/Primatives.js'
-// import { Model } from '@/webgl/Model'
+import { Model } from '@/webgl/Model'
 // import * as mat4 from '@/webgl/gl-matrix'
 import { Primatives } from '@/webgl/Primatives'
 export default {
@@ -54,10 +54,10 @@ export default {
     // m4.onload = () => this.loader += 1
     
     // Load model from server
-    // this.getModel();
+    this.getModel();
 
     // Load model from primative
-    this.initWebgl()
+    // this.initWebgl()
   },
   methods: {
     getModel() {
@@ -73,30 +73,37 @@ export default {
           // WebglParser.render(this.$refs.canvas, webglData)
         });
     },
-    initWebgl() {
+    initWebgl(webglData) {
       // Setup GLInstance
       this.gl = WebglInstance('glcanvas');
       this.gl.fitScreen(0.65, 0.6);
       this.gl.clearData();
       this.gCamera = new Camera(this.gl);
-      this.gCamera.transform.position.set(0, 1, 3);
+      this.gCamera.transform.position.set(0, 1, 10);
       this.gCameraCtrl = new CameraController(this.gl, this.gCamera);
-      console.log(this.gCamera, this.gCameraCtrl)
 
       // Load resources
       this.gShader = new TestShader(this.gl, this.gCamera.projectionMatrix);
-      // this.gModel = new Model(this.gl.createMeshVAO('Model1', webglData[0], webglData[1], webglData[2], webglData[3], 4));
-      this.gModel = Primatives.Cube.createModel(this.gl);
-      this.gModel.setPosition(0, 0.6, 0);
-      this.gModel.setScale(0.5, 0.5, 0.5);
-      console.log(this.gModel)
+
+      this.gModel = new Model(this.gl.createMeshVAO('Model', webglData[0], webglData[1], webglData[2], webglData[3], 3));
+      let size = this.gModel.getSize();
+      let origin = this.gModel.getOrigin();
+      // console.log(centre);
+      let currentPos = this.gModel.getPosition();
+      // this.gModel.setPosition(0.1, 0.33, -5.6);
+      // this.gModel.setPosition(1, 1, 1);
+      // this.gModel.addPosition(currentPos[0] - origin.x, currentPos[1] - origin.y, currentPos[2] - origin.z);
+      // currentPos = this.gModel.getPosition();
+      console.log('position: ', currentPos, ' , size: ', size, ' , worldPosition: ', origin);
+      // this.gModel.setScale(0.5, 0.5, 0.5);
 
       // Setup grid
-      // this.gGridShader = new GridAxisShader(this.gl, this.gCamera.projectionMatrix);
-      // this.gGridModel = Primatives.GridAxis.createModel(this.gl, false);
+      this.gGridShader = new GridAxisShader(this.gl, this.gCamera.projectionMatrix);
+      this.gGridModel = Primatives.GridAxis.createModel(this.gl, true);
+      // this.gGridModel.setPosition(2,2,2)
 
       // Begin rendering
-      this.gRLoop = new Render(this.onRender, 30);
+      this.gRLoop = new Render(this.onRender, 60);
       this.gRLoop.start();
     },
     // eslint-disable-next-line
@@ -113,13 +120,13 @@ export default {
       // console.log(this.gshader, this.gCamera.viewMatrix)
       this.gShader.setCameraMatrix(this.gCamera.viewMatrix);
 
-      this.gl.clearColor(0.75, 0.85, 0.8, 1.0);
+      this.gl.clearColor(0.9, 0.6, 0.2, 1);
       this.gl.clearData();
       this.gShader.renderModel(this.gModel.preRender());
 
-      // this.gGridShader.activate()
-      // this.gGridShader.setCameraMatrix(this.gCamera.viewMatrix);
-      // this.gGridShader.renderModel(this.gGridModel.preRender());
+      this.gGridShader.activate();
+      this.gGridShader.setCameraMatrix(this.gCamera.viewMatrix);
+      this.gGridShader.renderModel(this.gGridModel.preRender());
       
       // this.gShader.activate();
       // this.gShader.setCameraMatrix(this.gCamera.viewMatrix)

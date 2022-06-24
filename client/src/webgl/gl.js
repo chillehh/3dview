@@ -83,6 +83,8 @@ export function WebglInstance(canvasId) {
 
         // Setup vertices
         if (arrVert !== undefined && arrVert != null) {
+            // Store verts on mesh
+            rtn.vertices = arrVert
             // Create buffer
             rtn.bufVertices = this.createBuffer();
             // How big each vertex is

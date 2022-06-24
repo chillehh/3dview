@@ -26,30 +26,30 @@ export class OBJ {
             switch (line.charAt(0)) {
                 // Cache vertex data for index processing when going through face data
                 case 'v':
-                    itm = line.split(' ');
+                    itm = line.split(" ");
                     itm.shift();
                     switch(line.charAt(1)) {
-                        case ' ': // Vertex
-                            cVert.push(parseFloat(itm[0]), parseFloat[itm[1]], parseFloat[itm[2]]);
+                        case " ": // Vertex
+                            cVert.push(parseFloat(itm[0]), parseFloat(itm[1]), parseFloat(itm[2]));
                             break;
                         case 't': // UV
-                            cUV.push(parseFloat(itm[0]), parseFloat[itm[1]]);
+                            cUV.push(parseFloat(itm[0]), parseFloat(itm[1]));
                             break;
                         case 'n': // Normal
-                            cNorm.push(parseFloat(itm[0]), parseFloat[itm[1]], parseFloat[itm[2]]);
+                            cNorm.push(parseFloat(itm[0]), parseFloat(itm[1]), parseFloat(itm[2]));
                             break;
                     }
                     break;
                 
                 // Process face data
                 case 'f':
-                    itm = line.split(' ');
+                    itm = line.split(" ");
                     itm.shift();
                     isQuad = false;
 
                     for (i = 0; i < itm.length; i++) {
                         // If face is quad
-                        if (i === 3 && !isQuad) {
+                        if (i == 3 && !isQuad) {
                             i = 2; // Last vertex in the first triangle is the start of the 2nd triangle in a quad
                             isQuad = true;
                         }
@@ -70,8 +70,8 @@ export class OBJ {
                             fNorm.push(cNorm[ind], cNorm[ind + 1], cNorm[ind + 2]);
 
                             // Parse texture data if available
-                            if (arr[1] !== '') {
-                                ind = (parseInt(arr[1] - 1) * 2);
+                            if (arr[1] != "") {
+                                ind = (parseInt(arr[1]) - 1) * 2;
                                 fUV.push(cUV[ind], (!flipYUV) ? cUV[ind + 1] : 1 - cUV[ind + 1]);
                             }
 

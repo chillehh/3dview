@@ -1,5 +1,5 @@
 
-export class Vector3{
+export class Vector3 {
 	constructor(x,y,z){	this.x = x || 0.0;	this.y = y || 0.0;	this.z = z || 0.0; }
 
 	magnitude(v){
@@ -23,6 +23,70 @@ export class Vector3{
 	getArray(){ return [this.x,this.y,this.z]; }
 	getFloatArray(){ return new Float32Array([this.x,this.y,this.z]);}
 	clone(){ return new Vector3(this.x,this.y,this.z); }
+}
+
+export class Bounds {
+	constructor(verts){
+		// console.log(verts)
+		this.xMin = 0
+		this.yMin = 0
+		this.zMin = 0
+		this.xMax = 0
+		this.yMax = 0
+		this.zMax = 0
+
+		if (verts != undefined) {
+			for (let i = 0; i < verts.length; i += 3) {
+				// On first iteration, set min and max values to go from
+				if (i == 0) {
+					this.xMin = verts[i]
+					this.yMin = verts[i + 1]
+					this.zMin = verts[i + 2]
+					this.xMax = verts[i]
+					this.yMax = verts[i + 1]
+					this.zMax = verts[i + 2]
+				} else {
+					// x
+					if (this.xMin > verts[i]) {
+						this.xMin = verts[i]
+					}
+					if (this.xMax < verts[i]) {
+						this.xMax = verts[i]
+					}
+					// y
+					if (this.yMin > verts[i + 1]) {
+						this.yMin = verts[i + 1]
+					}
+					if (this.yMax < verts[i + 1]) {
+						this.yMax = verts[i + 1]
+					}
+					// z
+					if (this.zMin > verts[i + 2]) {
+						this.zMin = verts[i + 2]
+					} 
+					if (this.zMax < verts[i + 2]) {
+						this.zMax = verts[i + 2]
+					}
+				}
+			}
+		}
+		console.log(this.getBounds())
+		return this;
+	}
+
+	getBounds() {
+		return {
+			xMin: this.xMin,
+			xMax: this.xMax,
+			yMin: this.yMin,
+			yMax: this.yMax,
+			zMin: this.zMin,
+			zMax: this.zMax,
+		}
+	}
+	getArray(){ return [this.xMin,this.yMin,this.zMin,this.xMax,this.yMax,this.zMax]; }
+	getSize() { return new Vector3(this.xMax - this.xMin, this.yMax - this.yMin, this.zMax - this.zMin); }
+	getOrigin() { return new Vector3(Math.abs(this.xMax) - Math.abs(this.xMin), Math.abs(this.yMax) - Math.abs(this.yMin), Math.abs(this.zMax) - Math.abs(this.zMin)); }
 }
 
 
