@@ -73,9 +73,13 @@ export function WebglInstance(canvasId) {
     }
 
     // Turns arrays in GL buffers, then sets up a VAO that will predefine the buffers to standard shader attributes
-    gl.createMeshVAO = function(name, arrIdx, arrVert, arrNorm, arrUV, vertLen) {
+    gl.createMeshVAO = function(name, arrIdx, arrVert, arrNorm, arrUV, vertLen, keepData) {
         var rtn = { drawMode: this.TRIANGLES };
-
+        if (keepData) {
+            rtn.aIndex = arrIdx;
+            rtn.aVert = arrVert;
+            rtn.aNorm = arrNorm;
+        }
         // Create and bind VAO
         rtn.vao = this.createVertexArray();
         // Bind vertex array so calls to vertexAttribPointer/enableVertexAttribArray are saved to the VAO
@@ -83,8 +87,6 @@ export function WebglInstance(canvasId) {
 
         // Setup vertices
         if (arrVert !== undefined && arrVert != null) {
-            // Store verts on mesh
-            rtn.vertices = arrVert
             // Create buffer
             rtn.bufVertices = this.createBuffer();
             // How big each vertex is

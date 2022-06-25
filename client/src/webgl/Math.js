@@ -1,3 +1,7 @@
+export class MathUtil {
+	static Map(x, xMin, xMax, zMin, zMax) { return (x - xMin) / (xMax - xMin) * (zMax - zMin) + zMin}
+}
+
 
 export class Vector3 {
 	constructor(x,y,z){	this.x = x || 0.0;	this.y = y || 0.0;	this.z = z || 0.0; }
@@ -19,6 +23,9 @@ export class Vector3 {
 	set(x,y,z){ this.x = x; this.y = y; this.z = z;	return this; }
 
 	multiScalar(v){ this.x *= v; this.y *= v; this.z *= v; return this; }
+	subVectors(v1, v2){ return new Vector3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z); }
+	sub(v){ return new Vector3(this.x - v.x, this.y - v.y, this.z - v.z); }
+	add(v){ return new Vector3(this.x + v.x, this.y + v.y, this.z + v.z); }
 
 	getArray(){ return [this.x,this.y,this.z]; }
 	getFloatArray(){ return new Float32Array([this.x,this.y,this.z]);}
@@ -86,7 +93,8 @@ export class Bounds {
 	}
 	getArray(){ return [this.xMin,this.yMin,this.zMin,this.xMax,this.yMax,this.zMax]; }
 	getSize() { return new Vector3(this.xMax - this.xMin, this.yMax - this.yMin, this.zMax - this.zMin); }
-	getOrigin() { return new Vector3(Math.abs(this.xMax) - Math.abs(this.xMin), Math.abs(this.yMax) - Math.abs(this.yMin), Math.abs(this.zMax) - Math.abs(this.zMin)); }
+	getCentre() { return new Vector3((this.xMax - this.xMin) / 2, (this.yMax - this.yMin) / 2, (this.zMax - this.zMin) / 2); }
+	getOrigin() { return new Vector3(Math.abs(this.xMax - this.xMin), Math.abs(this.yMax - this.yMin), Math.abs(this.zMax - this.zMin)); }
 }
 
 

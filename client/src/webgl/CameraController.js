@@ -5,7 +5,7 @@ export class CameraController {
         this.canvas = gl.canvas;
         this.camera = camera;
         this.rotateRate = -300;
-        this.panRate = 5;
+        this.panRate = 10;
         this.zoomRate = 200;
         this.offsetX = box.left;
         this.offsetY = box.top;

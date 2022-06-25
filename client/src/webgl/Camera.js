@@ -6,9 +6,12 @@ export class Camera {
         // Setup perspective matrix
         this.projectionMatrix = new Float32Array(16);
         var ratio = gl.canvas.width / gl.canvas.height;
-        Matrix4.perspective(this.projectionMatrix, fov || 45, ratio, near || 0.1, far || 100.0);
+        Matrix4.perspective(this.projectionMatrix, fov || 45, ratio, near || 0.1, far || 500.0);
         this.transform = new Transform();
         this.viewMatrix = new Float32Array(16);
+        this.fov = fov || 45;
+        this.near = near || 0.1;
+        this.far = far || 500.0;
 
         this.mode = Camera.MODE_ORBIT;
     }
@@ -63,6 +66,11 @@ export class Camera {
         // Cameras work by doing the inverse transformation on all meshes
         Matrix4.invert(this.viewMatrix, this.transform.matView.raw);
         return this.viewMatrix;
+    }
+
+    // For updating the projection matrix after the camera has been created
+    updateProjectionMatrix() {
+        Matrix4.perspective(this.projectionMatrix, this.fov, this.ratio, this.near, this.far);
     }
 
     getTranslatelessMatrix() {
