@@ -82,7 +82,7 @@ export class OBJ {
                         }
 
                         // In a quad, the last vertex of the second triangle is the first vertex in the first triangle
-                        if (i === 3 && isQuad) {
+                        if (i == 3 && isQuad) {
                             fIndex.push(aCache[itm[0]]);
                         }
                     }

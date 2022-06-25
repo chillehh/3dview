@@ -6,7 +6,7 @@ export class Camera {
         // Setup perspective matrix
         this.projectionMatrix = new Float32Array(16);
         var ratio = gl.canvas.width / gl.canvas.height;
-        Matrix4.perspective(this.projectionMatrix, fov || 45, ratio, near || 0.1, far || 500.0);
+        Matrix4.perspective(this.projectionMatrix, fov || 45, ratio, near || 0.1, far || 5000.0);
         this.transform = new Transform();
         this.viewMatrix = new Float32Array(16);
         this.fov = fov || 45;

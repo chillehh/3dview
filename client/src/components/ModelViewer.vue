@@ -16,6 +16,8 @@ import { Render } from '@/webgl/Render.js'
 import { GridFloor } from '@/webgl/GridFloor.js'
 import { TestShader } from '@/webgl/shaders/TestShader.js'
 import { Model } from '@/webgl/Model'
+import { Vector3 } from '@/webgl/Math'
+// import webglParser from './webglParser'
 export default {
   name: 'ModelViewer',
   data() {
@@ -45,6 +47,7 @@ export default {
           console.log(r.data)
           // Parse data from .obj to webgl format
           const webglData = OBJ.parseText(r.data, false);
+          // const webglData = webglParser.parseOBJ(r.data);
           // Render model
           this.initWebgl(webglData);
         });
@@ -55,7 +58,8 @@ export default {
       this.gl.fitScreen(0.65, 0.8);
       this.gl.clearData();
       this.gCamera = new Camera(this.gl);
-      this.gCamera.transform.position.set(0, 1, 10);
+      this.gCamera.transform.position.set(0, 0.5, 3.5);
+      this.gCamera.transform.rotation.set(0, 34, 0);
       this.gCameraCtrl = new CameraController(this.gl, this.gCamera);
 
       // Load resources
@@ -66,12 +70,14 @@ export default {
       let origin = this.gModel.getOrigin();
       let centre = this.gModel.getCentre();
       let currentPos = this.gModel.getPosition();
-      // this.gModel.setPosition(1, 1, 1);
+      this.gModel.setPosition(0, 0.6, 0);
       console.log('position: ', currentPos, ' , size: ', size, ' , center: ', centre, ' , origin: ', origin);
-      // this.gModel.setScale(0.5, 0.5, 0.5);
+      this.gModel.setScale(0.5, 0.5, 0.5);
+      this.gModel.transform.rotation = new Vector3(180, 90, 180);
 
       // Setup grid
       this.gGrid = new GridFloor(this.gl, true);
+      this.gGrid.transform.scale = new Vector3(20, 20, 20);
 
       // Begin rendering
       this.gRLoop = (new Render(this.onRender, 60)).start();
@@ -96,7 +102,8 @@ export default {
       this.gShader.activate();
       this.gShader.setCameraMatrix(this.gCamera.viewMatrix);
 
-      this.gl.clearColor(0.9, 0.6, 0.2, 1);
+      // this.gl.clearColor(0.9, 0.6, 0.2, 1);
+      this.gl.clearColor(0.4235, 0.4549, 0.5019, 1);
       this.gl.clearData();
       this.gShader.renderModel(this.gModel.preRender());
 
