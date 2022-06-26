@@ -7,18 +7,19 @@ export class Model {
         this.mesh = meshData;
         this.bounds = new Bounds(this.mesh.aVert);
         // centre the model to 0, 0, 0
-        let origin = this.getOrigin();
-        let bounds = this.getBounds();
-        let x = (bounds.xMin + (0.5 * origin.x))
-        let y = (bounds.yMin + (0.5 * origin.y))
-        let z = (bounds.zMin + (0.5 * origin.z))
+        // let origin = this.getOrigin();
+        // let bounds = this.getBounds();
+        // let x = (bounds.xMin + (0.5 * origin.x))
+        // let y = (bounds.yMin + (0.5 * origin.y))
+        // let z = (bounds.zMin + (0.5 * origin.z))
         // console.log('x:',x, bounds.xMin, origin.x,'y:',y,bounds.yMin, origin.y,'z:',z,bounds.zMin, origin.z)
-        this.setWorldPosition(x == bounds.xMin ? 0 : -x, y == bounds.yMin ? 0 : -y, z == bounds.zMin ? 0 : -z);
+        // this.setWorldPosition(x == bounds.xMin ? 0 : -x, y == bounds.yMin ? 0 : -y, z == bounds.zMin ? 0 : -z);
     }
 
     // Getters / Setters
     getPosition() { return this.transform.position.getArray(); }
     getBounds() { return this.bounds.getBounds(); }
+    getExtent() { return this.bounds.getExtents(); }
     getSize() { return this.bounds.getSize(); }
     getOrigin() { return this.bounds.getOrigin(); }
     getCentre() { return this.bounds.getCentre(); }

@@ -16,7 +16,7 @@ import { Render } from '@/webgl/Render.js'
 import { GridFloor } from '@/webgl/GridFloor.js'
 import { TestShader } from '@/webgl/shaders/TestShader.js'
 import { Model } from '@/webgl/Model'
-import { Vector3 } from '@/webgl/Math'
+import { Matrix4, Vector3 } from '@/webgl/Math'
 // import webglParser from './webglParser'
 export default {
   name: 'ModelViewer',
@@ -46,7 +46,7 @@ export default {
         .then(r => {
           console.log(r.data)
           // Parse data from .obj to webgl format
-          const webglData = OBJ.parseText(r.data, false);
+          const webglData = OBJ.parseText(r.data, true);
           // const webglData = webglParser.parseOBJ(r.data);
           // Render model
           this.initWebgl(webglData);
@@ -58,43 +58,51 @@ export default {
       this.gl.fitScreen(0.65, 0.8);
       this.gl.clearData();
       this.gCamera = new Camera(this.gl);
-      this.gCamera.transform.position.set(0, 0.5, 3.5);
-      this.gCamera.transform.rotation.set(0, 34, 0);
       this.gCameraCtrl = new CameraController(this.gl, this.gCamera);
 
       // Load resources
       this.gShader = new TestShader(this.gl, this.gCamera.projectionMatrix);
-
       this.gModel = new Model(this.gl.createMeshVAO('Model', webglData[0], webglData[1], webglData[2], webglData[3], 3, true));
-      let size = this.gModel.getSize().magnitude();
-      let origin = this.gModel.getOrigin();
-      let centre = this.gModel.getCentre();
-      let currentPos = this.gModel.getPosition();
-      this.gModel.setPosition(0, 0.6, 0);
-      console.log('position: ', currentPos, ' , size: ', size, ' , center: ', centre, ' , origin: ', origin);
-      this.gModel.setScale(0.5, 0.5, 0.5);
-      this.gModel.transform.rotation = new Vector3(180, 90, 180);
 
       // Setup grid
       this.gGrid = new GridFloor(this.gl, true);
       this.gGrid.transform.scale = new Vector3(20, 20, 20);
-
+      // Set grid position to yMin bounds of model
+      let extent = this.gModel.getExtent();
+      console.log('BOUNDS.x: ', extent);
+      // Put camera in view and center model
+      this.updateCamera(extent);
+      let size = this.gModel.getSize().magnitude();
+      let origin = this.gModel.getOrigin();
+      let centre = this.gModel.getCentre();
+      let currentPos = this.gModel.getPosition();
+      console.log('position: ', currentPos, ' , size: ', size, ' , center: ', centre, ' , origin: ', origin);
       // Begin rendering
       this.gRLoop = (new Render(this.onRender, 60)).start();
     },
-    // updateCamera(size, centre) {
-    //   const halfFitScreenSize = size * 0.5;
-    //   const halfFovY = (this.gCamera.fov * 0.5) * (Math.PI / 180);
-    //   const distance = halfFitScreenSize / Math.tan(halfFovY);
-    //   // calculate unit vector that points in the direction the camera is now from the centre of the model
-    //   const direction = (new Vector3(0, 0, 0)).sub(this.gCamera.transform.position, centre).normalize();
-    //   // move camera to a position distance units away from centre in whatever direction the camera was from the centre already
-    //   // this.gCamera.transform.position.set(direction.multiScalar(distance).add(centre));
-    //   // // get near and far values for the frustum that will contain the model within it
-    //   // this.gCamera.near = size / 100;
-    //   // this.gCamera.far = size * 100;
-    //   // this.gCamera.updateProjectionMatrix();
-    // },
+    updateCamera(extent) {
+      const range = new Vector3().subVectors(extent.max, extent.min);
+      let modelOffset = new Vector3().addVectors(extent.min, range.multiScalar(0.5));
+      modelOffset = modelOffset.multiScalar(-1);
+      this.gModel.transform.position = modelOffset;
+      // Set grid y to new extent min y pos
+      this.gGrid.transform.position.set(0, this.gModel.transform.position.y + (this.gModel.getExtent().min.y), 0);
+      // Make sure target is centred at 0
+      const target = new Vector3(0, 0, 0);
+      // Work out how to move the camera based on the model\
+      const radius = range.magnitude() * 2;
+      const cameraPos = target.add(new Vector3(0, 0, radius));
+      this.gCamera.near = radius / 100;
+      this.gCamera.far = radius * 3;
+      // console.log(this.gCamera.near, this.gCamera.far);
+      const up = new Vector3(0, 1, 0);
+      // const fovy = 60 * Math.PI / 180;
+      this.gCamera.transform.position = cameraPos;
+      // console.log(this.gCamera.transform.position);
+      let camMatrix = Matrix4.identity();
+      Matrix4.lookAt(cameraPos, target, up, camMatrix);
+      Matrix4.invert(this.gCamera.viewMatrix, camMatrix);
+    },
     // eslint-disable-next-line
     onRender(dt) {
       this.gCamera.updateViewMatrix();

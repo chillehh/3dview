@@ -24,6 +24,7 @@ export class Vector3 {
 
 	multiScalar(v){ this.x *= v; this.y *= v; this.z *= v; return this; }
 	subVectors(v1, v2){ return new Vector3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z); }
+	addVectors(v1, v2){ return new Vector3(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z); }
 	sub(v){ return new Vector3(this.x - v.x, this.y - v.y, this.z - v.z); }
 	add(v){ return new Vector3(this.x + v.x, this.y + v.y, this.z + v.z); }
 
@@ -34,7 +35,6 @@ export class Vector3 {
 
 export class Bounds {
 	constructor(verts){
-		// console.log(verts)
 		this.xMin = 0
 		this.yMin = 0
 		this.zMin = 0
@@ -91,6 +91,13 @@ export class Bounds {
 			zMax: this.zMax,
 		}
 	}
+	getExtents() {
+		return {
+			min: new Vector3(this.xMin, this.yMin, this.zMin),
+			max: new Vector3(this.xMax, this.yMax, this.zMax),
+		}
+	}
+
 	getArray(){ return [this.xMin,this.yMin,this.zMin,this.xMax,this.yMax,this.zMax]; }
 	getSize() { return new Vector3(this.xMax - this.xMin, this.yMax - this.yMin, this.zMax - this.zMin); }
 	getCentre() { return new Vector3((this.xMax - this.xMin) / 2, (this.yMax - this.yMin) / 2, (this.zMax - this.zMin) / 2); }
@@ -521,5 +528,59 @@ export class Matrix4{
 		out[13] = out[1] * x + out[5] * y + out[9]	* z + out[13];
 		out[14] = out[2] * x + out[6] * y + out[10]	* z + out[14];
 		out[15] = out[3] * x + out[7] * y + out[11]	* z + out[15];
+	}
+
+	// calculates cross product of 2 vectors
+	static cross(out, a, b) {
+		out[0] = a[1] * b[2] - a[2] * b[1];
+		out[1] = a[2] * b[0] - a[0] * b[2];
+		out[2] = a[0] * b[1] - a[1] * b[0];
+		return out;
+	}
+
+	static normalize(out, v) {
+		var length = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+		// make sure we don't divide by 0.
+		if (length > 0.00001) {
+			out[0] = v[0] / length;
+			out[1] = v[1] / length;
+			out[2] = v[2] / length;
+		}
+		return out;
+	}
+
+	static subtractVectors(out, a, b) {
+		out[0] = a[0] - b[0];
+		out[1] = a[1] - b[1];
+		out[2] = a[2] - b[2];
+		return out;
+	}
+
+	static lookAt(cameraPosition, target, up, out) {
+		var zAxis = Matrix4.identity();
+		var xAxis = Matrix4.identity();
+		var yAxis = Matrix4.identity();
+		Matrix4.normalize(zAxis, Matrix4.subtractVectors(zAxis, cameraPosition, target));
+		Matrix4.normalize(xAxis, Matrix4.cross(xAxis, up, zAxis));
+		Matrix4.normalize(yAxis, Matrix4.cross(yAxis, zAxis, xAxis));
+	
+		out[ 0] = xAxis[0];
+		out[ 1] = xAxis[1];
+		out[ 2] = xAxis[2];
+		out[ 3] = 0;
+		out[ 4] = yAxis[0];
+		out[ 5] = yAxis[1];
+		out[ 6] = yAxis[2];
+		out[ 7] = 0;
+		out[ 8] = zAxis[0];
+		out[ 9] = zAxis[1];
+		out[10] = zAxis[2];
+		out[11] = 0;
+		out[12] = cameraPosition[0];
+		out[13] = cameraPosition[1];
+		out[14] = cameraPosition[2];
+		out[15] = 1;
+	
+		return out;
 	}
 }
