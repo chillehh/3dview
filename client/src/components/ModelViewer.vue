@@ -17,7 +17,8 @@ import { GridFloor } from '@/webgl/GridFloor.js'
 import { TestShader } from '@/webgl/shaders/TestShader.js'
 import { Model } from '@/webgl/Model'
 import { Matrix4, Vector3 } from '@/webgl/Math'
-// import webglParser from './webglParser'
+import { VertexLight } from '@/webgl/shaders/LightShader'
+import { MathUtil } from '@/webgl/Math'
 export default {
   name: 'ModelViewer',
   data() {
@@ -30,6 +31,7 @@ export default {
       gCamera: undefined,
       gCameraCtrl: undefined,
       gGrid: undefined,
+      gLight: undefined,
     } 
   },
   props: {
@@ -67,11 +69,19 @@ export default {
       // Setup grid
       this.gGrid = new GridFloor(this.gl, true);
       this.gGrid.transform.scale = new Vector3(20, 20, 20);
-      // Set grid position to yMin bounds of model
+      // Adjust model and grid and camera to all be in the correct positions based on the size of the model
       let extent = this.gModel.getExtent();
       console.log('BOUNDS.x: ', extent);
       // Put camera in view and center model
       this.updateCamera(extent);
+
+      // Setup light
+      this.gLight = new VertexLight(this.gl, 100);
+      this.gLight.addColour('#ff0000');
+      this.gLight.addPoint(2, 50, 10, 0);
+      this.gLight.finalize();
+
+
       let size = this.gModel.getSize().magnitude();
       let origin = this.gModel.getOrigin();
       let centre = this.gModel.getCentre();
@@ -107,8 +117,18 @@ export default {
     onRender(dt) {
       this.gCamera.updateViewMatrix();
 
+			//Move the Light
+			angle += angleInc * dt;
+			yPos += yPosInc * dt;
+			var x = radius * Math.cos(angle),
+				z = radius * Math.sin(angle),
+				y = MathUtil.Map(Math.sin(yPos),-1,1,0.1,2);
+			this.gLight.transform.position.set(x,y,z);
+
       this.gShader.activate();
       this.gShader.setCameraMatrix(this.gCamera.viewMatrix);
+      this.gShader.setLightPos(this.gLight);
+      this.gShader.renderModel(this.gModel.preRender());
 
       // this.gl.clearColor(0.9, 0.6, 0.2, 1);
       this.gl.clearColor(0.4235, 0.4549, 0.5019, 1);
@@ -116,6 +136,7 @@ export default {
       this.gShader.renderModel(this.gModel.preRender());
 
       this.gGrid.render(this.gCamera);
+      this.gLight.render(this.gCamera);
     },
   },
 }

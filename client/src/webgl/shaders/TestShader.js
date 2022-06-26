@@ -8,11 +8,24 @@ export class TestShader extends Shader{
 
         var uColor	= gl.getUniformLocation(this.program,"uColor");
         gl.uniform3fv(uColor, new Float32Array( GlUtil.rgbArray("#FF0000","00FF00","0000FF","909090","C0C0C0","404040") ));
+        this.uniformLoc.lightpos = gl.getUniformLocation(this.program, 'uLightPos');
+        this.uniformLoc.campos = gl.getUniformLocation(this.program, 'uCamPos');
+        this.uniformLoc.matNorm = gl.getUniformLocation(this.program, 'uNormMatrix');
 
         //Standrd Uniforms
         this.setPerspective(pMatrix);
-        this.mainTexture = -1; //Store Our Texture ID
+        // this.mainTexture = -1; //Store Our Texture ID
         gl.useProgram(null); //Done setting up shader
         return this;
     }
+
+    setLightPos(obj){ this.gl.uniform3fv(this.uniformLoc.lightpos, new Float32Array(obj.transform.position.getArray())); return this;}
+    setCameraPos(obj){ this.gl.uniform3fv(this.uniformLoc.campos, new Float32Array(obj.transform.position.getArray())); return this;}
+
+    renderModel(model) {
+        this.gl.uniformMatrix3fv(this.uniformLoc.matNorm, false, model.transform.getNormalMatrix());
+        super.renderModel(model);
+        return this;
+    }
+
 }
