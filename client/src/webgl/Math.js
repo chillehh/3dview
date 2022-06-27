@@ -1,5 +1,5 @@
 export class MathUtil {
-	static Map(x, xMin, xMax, zMin, zMax) { return (x - xMin) / (xMax - xMin) * (zMax - zMin) + zMin}
+	static Map(x, xMin, xMax, zMin, zMax) { return (x - xMin) / (xMax - xMin) * (zMax - zMin) + zMin; }
 }
 
 
