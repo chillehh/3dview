@@ -5,7 +5,7 @@ export class CameraController {
         this.canvas = gl.canvas;
         this.camera = camera;
         this.rotateRate = -300;
-        this.panRate = 10;
+        this.panRate = 200;
         this.zoomRate = 1000;
         this.offsetX = box.left;
         this.offsetY = box.top;
@@ -36,8 +36,7 @@ export class CameraController {
     }
 
     // Finish listening for drag
-    // eslint-disable-next-line
-    onMouseUp(e) {
+    onMouseUp() {
         this.canvas.removeEventListener('mouseup', this.onUpHandler);
         this.canvas.removeEventListener('mousemove', this.onMoveHandler);
     }
@@ -48,16 +47,16 @@ export class CameraController {
     }
 
     onMouseMove(e) {
-        var x = e.pageX - this.offsetX,
-            y = e.pageY - this.offsetY,
+        var x = e.clientX - this.canvas.getBoundingClientRect().left,
+            y = e.clientY - this.canvas.getBoundingClientRect().top,
             dx = x - this.prevX,
             dy = y - this.prevY;
-        
+
         // Listen for shift key and pan around otherwise rotate
         if (!e.shiftKey) {
-            this.camera.transform.rotation.y += dx * (this.rotateRate / this.canvas.width);
+            this.camera.transform.rotation.y += dx * (this.rotateRate / this.canvas.height);
             this.camera.transform.rotation.x += dy * (this.rotateRate / this.canvas.height);
-        } {
+        } else {
             this.camera.panX(-dx * (this.panRate / this.canvas.width));
             this.camera.panY(dy * (this.panRate / this.canvas.height));
         }
