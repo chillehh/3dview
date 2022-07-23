@@ -1,8 +1,10 @@
 <template>
   <div class="viewer">
-    <h1>ModelViewer.</h1>
-    <p>This will be where you can view 3D models</p>
     <canvas ref="canvas" id="glcanvas"></canvas>
+    <div class="config">
+      <button type="button" id="zoomIn" class="btn btn-dark" @click="zoom(true)">+</button>
+      <button type="button" id="zoomOut" class="btn btn-dark" @click="zoom(false)">-</button>
+    </div>
   </div>
 </template>
 
@@ -55,7 +57,7 @@ export default {
     initWebgl(webglData) {
       // Setup GLInstance
       this.gl = WebglInstance('glcanvas');
-      this.gl.fitScreen(0.65, 0.8);
+      this.gl.fitScreen(1, 1);
       this.gl.clearData();
       this.gCamera = new Camera(this.gl);
       this.gCameraCtrl = new CameraController(this.gl, this.gCamera);
@@ -69,14 +71,8 @@ export default {
       this.gGrid.transform.scale = new Vector3(20, 20, 20);
       // Set grid position to yMin bounds of model
       let extent = this.gModel.getExtent();
-      console.log('BOUNDS.x: ', extent);
       // Put camera in view and center model
       this.updateCamera(extent);
-      let size = this.gModel.getSize().magnitude();
-      let origin = this.gModel.getOrigin();
-      let centre = this.gModel.getCentre();
-      let currentPos = this.gModel.getPosition();
-      console.log('position: ', currentPos, ' , size: ', size, ' , center: ', centre, ' , origin: ', origin);
       // Begin rendering
       this.gRLoop = (new Render(this.onRender, 60)).start();
     },
@@ -117,6 +113,9 @@ export default {
 
       this.gGrid.render(this.gCamera);
     },
+    zoom(zoomIn) {
+      this.gCameraCtrl.onMouseWheel({ wheelDelta: zoomIn ? -1 : 1 })
+    },
   },
 }
 </script>
@@ -124,20 +123,26 @@ export default {
 <style scoped>
   .viewer {
       width: 100%;
+      height: 100%;
+      overflow-x: hidden;
+      overflow-y: hidden;
       font-family: "Trebuchet MS", Helvetica, sans-serif;
-      text-align: center;
   }
 
-  h1 {
-      font-size: 64px;
+  #glcanvas {
+    position: relative;
+    overflow: hidden;
   }
 
-  p {
-      font-size: 24px;
+  .config {
+    position: absolute;
+    bottom: 0%;
+    left: 0%;
   }
+</style>
 
-  #canvas {
-    width: 100%;
-    height: 100%;
+<style>
+  html {
+    overflow: hidden;
   }
 </style>

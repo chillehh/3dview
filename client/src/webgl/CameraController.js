@@ -6,7 +6,7 @@ export class CameraController {
         this.camera = camera;
         this.rotateRate = -300;
         this.panRate = 10;
-        this.zoomRate = 200;
+        this.zoomRate = 1000;
         this.offsetX = box.left;
         this.offsetY = box.top;
         this.initX = 0;
