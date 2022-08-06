@@ -2,8 +2,19 @@
   <div class="viewer">
     <canvas ref="canvas" id="glcanvas"></canvas>
     <div class="config">
-      <button type="button" id="zoomIn" class="btn btn-dark" @click="zoom(true)">+</button>
-      <button type="button" id="zoomOut" class="btn btn-dark" @click="zoom(false)">-</button>
+      <button type="button" id="zoomOut" class="btn btn-dark" @click="zoom(-5, true)">
+        <font-awesome-icon icon="fa-solid fa-minus"/>
+      </button>
+      <input type="range" class="form-range" id="zoomRange" v-model="zoomLevel" v-on:change="zoom(zoomLevel - prevZoomLevel, false)"/>
+      <button type="button" id="zoomIn" class="btn btn-dark" @click="zoom(5, true)">
+        <font-awesome-icon icon="fa-solid fa-plus"/>
+      </button>
+      <button type="button" id="pan" class="btn btn-dark" @click="toggleMode(1)">
+        <font-awesome-icon icon="fa-solid fa-arrows-up-down-left-right"/>
+      </button>
+      <button type="button" id="rotate" class="btn btn-dark" @click="toggleMode(0)">
+        <font-awesome-icon icon="fa-solid fa-camera-rotate"/>
+      </button>
     </div>
   </div>
 </template>
@@ -32,6 +43,8 @@ export default {
       gCamera: undefined,
       gCameraCtrl: undefined,
       gGrid: undefined,
+      zoomLevel: 0,
+      prevZoomLevel: 0,
     } 
   },
   props: {
@@ -58,6 +71,9 @@ export default {
       // Setup GLInstance
       this.gl = WebglInstance('glcanvas');
       this.gl.fitScreen(1, 1);
+      // window.addEventListener('resize', () => {
+      //   this.gl.fitScreen(1, 1);
+      // });
       this.gl.clearData();
       this.gCamera = new Camera(this.gl);
       this.gCameraCtrl = new CameraController(this.gl, this.gCamera);
@@ -113,9 +129,26 @@ export default {
 
       this.gGrid.render(this.gCamera);
     },
-    zoom(zoomIn) {
-      this.gCameraCtrl.onMouseWheel({ wheelDelta: zoomIn ? -1 : 1 })
+    zoom(zoomIn, btn) {
+      this.zoomLevel = this.clamp(parseInt(this.zoomLevel), 0, 100)
+      if (btn) {
+        this.zoomLevel += zoomIn
+        if (this.zoomLevel >= 0 && this.zoomLevel <= 100) {
+          this.gCameraCtrl.onMouseWheel({ wheelDelta: zoomIn > 0 ? -1 : 1 })
+        }
+      } else {
+        for (let i = 0; i < Math.abs(zoomIn) / 5; i++) {
+          this.gCameraCtrl.onMouseWheel({ wheelDelta: zoomIn > 0 ? -1 : 1 })
+        }
+      }
+      this.prevZoomLevel = this.zoomLevel
     },
+    toggleMode(mode) {
+      this.gCameraCtrl.setCameraMode(mode)
+    },
+    clamp(num, min, max) {
+      return Math.min(Math.max(num, min), max);
+    }
   },
 }
 </script>
@@ -138,7 +171,30 @@ export default {
     position: absolute;
     bottom: 0%;
     left: 0%;
+    height: 40px;
   }
+
+  input[type=range]::-webkit-slider-thumb {
+    background: #ff9a64;
+  }
+  input[type=range]::-moz-range-thumb {
+    background: #ff9a64;
+  }
+  input[type=range]::-ms-thumb {
+    background: #ff9a64;
+  }
+
+  .btn {
+    background-color: #ff9a64;
+  }
+
+  #zoomRange {
+    padding-top: 18px;
+    padding-left: 2px;
+    padding-right: 2px;
+    width: 250px;
+  }
+
 </style>
 
 <style>

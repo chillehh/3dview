@@ -1,3 +1,8 @@
+const MODE = {
+    ROTATE: 0,
+    PAN: 1
+}
+
 export class CameraController {
     constructor(gl, camera) {
         var This = this;
@@ -6,7 +11,9 @@ export class CameraController {
         this.camera = camera;
         this.rotateRate = -300;
         this.panRate = 200;
-        this.zoomRate = 1000;
+        this.zoomRate = 100;
+        this.maxZoom = 1000;
+        this.minZoom = -1000;
         this.offsetX = box.left;
         this.offsetY = box.top;
         this.initX = 0;
@@ -17,6 +24,11 @@ export class CameraController {
         this.onMoveHandler = function(e) { This.onMouseMove(e); };
         this.canvas.addEventListener('mousedown', function(e) { This.onMouseDown(e); });
         this.canvas.addEventListener('mousewheel', function(e) { This.onMouseWheel(e); });
+        this.CAMERA_MODE = MODE.ROTATE
+    }
+
+    setCameraMode(mode) {
+        this.CAMERA_MODE = mode
     }
 
     // Transform mouse x, y coords to something usable by the canvas
@@ -54,8 +66,16 @@ export class CameraController {
 
         // Listen for shift key and pan around otherwise rotate
         if (!e.shiftKey) {
-            this.camera.transform.rotation.y += dx * (this.rotateRate / this.canvas.height);
-            this.camera.transform.rotation.x += dy * (this.rotateRate / this.canvas.height);
+            switch (this.CAMERA_MODE) {
+                case MODE.ROTATE:
+                    this.camera.transform.rotation.y += dx * (this.rotateRate / this.canvas.height);
+                    this.camera.transform.rotation.x += dy * (this.rotateRate / this.canvas.height);
+                    break
+                case MODE.PAN:
+                    this.camera.panX(-dx * (this.panRate / this.canvas.width));
+                    this.camera.panY(dy * (this.panRate / this.canvas.height));
+                    break
+            }
         } else {
             this.camera.panX(-dx * (this.panRate / this.canvas.width));
             this.camera.panY(dy * (this.panRate / this.canvas.height));
