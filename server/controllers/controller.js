@@ -10,7 +10,7 @@ const test = async (req, res) => {
 const uploadFile = async (req, res) => {
     try {
         const file = req.file;
-        if(!file) {
+        if (!file) {
             res.send({
                 status: false,
                 message: 'No file uploaded'
@@ -27,6 +27,7 @@ const uploadFile = async (req, res) => {
                 const newModelData = new ModelData({
                     url: url,
                     path: "./uploads/" + file.filename,
+                    name: file.originalname,
                 })
                 await newModelData.save();
             }
@@ -57,7 +58,8 @@ const downloadFile = async (req, res) => {
     )
     const filePath = `${__dirname}/../${modelData.path}`;
     console.log(filePath)
-    res.download(filePath);
+    res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
+    res.download(filePath, modelData.name);
 }
 
 module.exports = {

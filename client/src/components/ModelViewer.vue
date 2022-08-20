@@ -3,17 +3,23 @@
     <canvas ref="canvas" id="glcanvas"></canvas>
     <div class="config">
       <button type="button" id="zoomOut" class="btn btn-dark" @click="zoom(-5, true)">
-        <font-awesome-icon icon="fa-solid fa-minus"/>
+        <font-awesome-icon icon="fa-solid fa-minus" />
       </button>
-      <input type="range" class="form-range" id="zoomRange" v-model="zoomLevel" v-on:change="zoom(zoomLevel - prevZoomLevel, false)"/>
+      <input type="range" class="form-range" id="zoomRange" v-model="zoomLevel"
+        v-on:change="zoom(zoomLevel - prevZoomLevel, false)" />
       <button type="button" id="zoomIn" class="btn btn-dark" @click="zoom(5, true)">
-        <font-awesome-icon icon="fa-solid fa-plus"/>
+        <font-awesome-icon icon="fa-solid fa-plus" />
       </button>
       <button type="button" id="pan" class="btn btn-dark" @click="toggleMode(1)">
-        <font-awesome-icon icon="fa-solid fa-arrows-up-down-left-right"/>
+        <font-awesome-icon icon="fa-solid fa-arrows-up-down-left-right" />
       </button>
       <button type="button" id="rotate" class="btn btn-dark" @click="toggleMode(0)">
-        <font-awesome-icon icon="fa-solid fa-camera-rotate"/>
+        <font-awesome-icon icon="fa-solid fa-camera-rotate" />
+      </button>
+    </div>
+    <div class="config-right">
+      <button type="button" id="download" class="btn btn-dark" @click="downloadModel()">
+        <font-awesome-icon icon="fa-solid fa-download" />
       </button>
     </div>
   </div>
@@ -21,7 +27,7 @@
 
 <script>
 import GetService from '@/services/GetService'
-import {WebglInstance} from '@/webgl/gl.js'
+import { WebglInstance } from '@/webgl/gl.js'
 import { Camera } from '@/webgl/Camera.js'
 import { CameraController } from '@/webgl/CameraController.js'
 import { OBJ } from '@/webgl/utils/parseOBJ.js'
@@ -30,6 +36,7 @@ import { GridFloor } from '@/webgl/GridFloor.js'
 import { TestShader } from '@/webgl/shaders/TestShader.js'
 import { Model } from '@/webgl/Model'
 import { Matrix4, Vector3 } from '@/webgl/Math'
+import _ from 'lodash'
 // import webglParser from './webglParser'
 export default {
   name: 'ModelViewer',
@@ -45,7 +52,8 @@ export default {
       gGrid: undefined,
       zoomLevel: 0,
       prevZoomLevel: 0,
-    } 
+      modelData: undefined,
+    }
   },
   props: {
     modelId: String
@@ -59,7 +67,8 @@ export default {
       // Call a get route to get the model from the server and load it into webgl
       GetService.getFile(this.modelId)
         .then(r => {
-          console.log(r.data)
+          console.log(r.headers)
+          this.modelData = r
           // Parse data from .obj to webgl format
           const webglData = OBJ.parseText(r.data, true);
           // const webglData = webglParser.parseOBJ(r.data);
@@ -71,9 +80,6 @@ export default {
       // Setup GLInstance
       this.gl = WebglInstance('glcanvas');
       this.gl.fitScreen(1, 1);
-      // window.addEventListener('resize', () => {
-      //   this.gl.fitScreen(1, 1);
-      // });
       this.gl.clearData();
       this.gCamera = new Camera(this.gl);
       this.gCameraCtrl = new CameraController(this.gl, this.gCamera);
@@ -101,16 +107,13 @@ export default {
       this.gGrid.transform.position.set(0, this.gModel.transform.position.y + (this.gModel.getExtent().min.y), 0);
       // Make sure target is centred at 0
       const target = new Vector3(0, 0, 0);
-      // Work out how to move the camera based on the model\
+      // Work out how to move the camera based on the model
       const radius = range.magnitude() * 2;
       const cameraPos = target.add(new Vector3(0, 0, radius));
       this.gCamera.near = radius / 100;
       this.gCamera.far = radius * 3;
-      // console.log(this.gCamera.near, this.gCamera.far);
       const up = new Vector3(0, 1, 0);
-      // const fovy = 60 * Math.PI / 180;
       this.gCamera.transform.position = cameraPos;
-      // console.log(this.gCamera.transform.position);
       let camMatrix = Matrix4.identity();
       Matrix4.lookAt(cameraPos, target, up, camMatrix);
       Matrix4.invert(this.gCamera.viewMatrix, camMatrix);
@@ -122,7 +125,6 @@ export default {
       this.gShader.activate();
       this.gShader.setCameraMatrix(this.gCamera.viewMatrix);
 
-      // this.gl.clearColor(0.9, 0.6, 0.2, 1);
       this.gl.clearColor(0.4235, 0.4549, 0.5019, 1);
       this.gl.clearData();
       this.gShader.renderModel(this.gModel.preRender());
@@ -146,6 +148,20 @@ export default {
     toggleMode(mode) {
       this.gCameraCtrl.setCameraMode(mode)
     },
+    downloadModel() {
+      // Download file after getting model
+      if (this.modelData) {
+        var fileURL = window.URL.createObjectURL(new Blob([this.modelData.data]));
+        var fileLink = document.createElement('a');
+        var fileName = _.split(this.modelData.headers['content-disposition'], 'filename=')
+
+        fileLink.href = fileURL;
+        fileLink.setAttribute('download', fileName[1]);
+        document.body.appendChild(fileLink);
+
+        fileLink.click();
+      }
+    },
     clamp(num, min, max) {
       return Math.min(Math.max(num, min), max);
     }
@@ -154,51 +170,59 @@ export default {
 </script>
 
 <style scoped>
-  .viewer {
-      width: 100%;
-      height: 100%;
-      overflow-x: hidden;
-      overflow-y: hidden;
-      font-family: "Trebuchet MS", Helvetica, sans-serif;
-  }
+.viewer {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
 
-  #glcanvas {
-    position: relative;
-    overflow: hidden;
-  }
+#glcanvas {
+  position: relative;
+  overflow: hidden;
+}
 
-  .config {
-    position: absolute;
-    bottom: 0%;
-    left: 0%;
-    height: 40px;
-  }
+.config {
+  position: absolute;
+  bottom: 0%;
+  left: 0%;
+  height: 40px;
+}
 
-  input[type=range]::-webkit-slider-thumb {
-    background: #ff9a64;
-  }
-  input[type=range]::-moz-range-thumb {
-    background: #ff9a64;
-  }
-  input[type=range]::-ms-thumb {
-    background: #ff9a64;
-  }
+.config-right {
+  position: absolute;
+  bottom: 0%;
+  right: 0%;
+  height: 40px;
+}
 
-  .btn {
-    background-color: #ff9a64;
-  }
+input[type=range]::-webkit-slider-thumb {
+  background: #ff9a64;
+}
 
-  #zoomRange {
-    padding-top: 18px;
-    padding-left: 2px;
-    padding-right: 2px;
-    width: 250px;
-  }
+input[type=range]::-moz-range-thumb {
+  background: #ff9a64;
+}
 
+input[type=range]::-ms-thumb {
+  background: #ff9a64;
+}
+
+.btn {
+  background-color: #ff9a64;
+}
+
+#zoomRange {
+  padding-top: 18px;
+  padding-left: 2px;
+  padding-right: 2px;
+  width: 250px;
+}
 </style>
 
 <style>
-  html {
-    overflow: hidden;
-  }
+html {
+  overflow: hidden;
+}
 </style>
